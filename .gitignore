@@ -1,0 +1,4 @@
+.DS_Store
+logs
+set_env_vars.sh
+pid.file
