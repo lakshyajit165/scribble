@@ -35,8 +35,8 @@ else
         echo "Starting $service...";
         cd ./"$service"
         gradle build -x test
-        gradle bootRun > ../logs/"${i}.log" 2>&1 &
-        echo $! $i >> ../pid.file
+        gradle bootRun > ../logs/"$service.log" 2>&1 &
+        echo $! "$service" >> ../pid.file
         cd ..
     done
 fi
