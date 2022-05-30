@@ -1,7 +1,7 @@
 package com.scribble.authservice.dto;
 
 
-import com.scribble.authservice.model.AuthErrorCode;
+import com.scribble.authservice.model.HttpStatusCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 public class ValidationErrorDTO {
     private List<FieldErrorDTO> fieldErrors = new ArrayList<>();
-    private AuthErrorCode authErrorCode;
+    private HttpStatusCode httpStatusCode;
     private String message;
 
     public ValidationErrorDTO() {

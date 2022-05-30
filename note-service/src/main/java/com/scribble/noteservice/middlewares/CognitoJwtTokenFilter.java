@@ -1,10 +1,9 @@
-package com.scribble.authservice.middlewares;
+package com.scribble.noteservice.middlewares;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.scribble.authservice.dto.GenericAuthResponse;
-import com.scribble.authservice.model.HttpStatusCode;
-import com.scribble.authservice.security.CognitoIdTokenProcessor;
+import com.scribble.noteservice.dto.GenericNotesResponse;
+import com.scribble.noteservice.model.HttpStatusCode;
+import com.scribble.noteservice.security.CognitoIdTokenProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +40,10 @@ public class CognitoJwtTokenFilter extends OncePerRequestFilter {
             logger.error(e.getMessage());
             SecurityContextHolder.clearContext();
             ObjectMapper mapper = new ObjectMapper();
-            GenericAuthResponse genericAuthResponse = new GenericAuthResponse(HttpStatusCode.BAD_REQUEST, e.getMessage());
+            GenericNotesResponse genericNotesResponse = new GenericNotesResponse(HttpStatusCode.BAD_REQUEST, e.getMessage());
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write(mapper.writeValueAsString(genericAuthResponse));
+            response.getWriter().write(mapper.writeValueAsString(genericNotesResponse));
         }
 
     }

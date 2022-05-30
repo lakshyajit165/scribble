@@ -2,7 +2,7 @@ package com.scribble.authservice.utils;
 
 
 import com.scribble.authservice.dto.ValidationErrorDTO;
-import com.scribble.authservice.model.AuthErrorCode;
+import com.scribble.authservice.model.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class ApiRequestErrorHandler {
             String localizedErrorMessage = resolveLocalizedErrorMessage(fieldError);
             validationErrorDTO.addFieldError(fieldError.getCode(), localizedErrorMessage, fieldError.getField());
         }
-        validationErrorDTO.setAuthErrorCode(AuthErrorCode.BAD_REQUEST);
+        validationErrorDTO.setHttpStatusCode(HttpStatusCode.BAD_REQUEST);
         validationErrorDTO.setMessage("There are some validation errors");
         return validationErrorDTO;
     }

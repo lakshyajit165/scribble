@@ -1,6 +1,6 @@
 package com.scribble.authservice.dto;
 
-import com.scribble.authservice.model.AuthErrorCode;
+import com.scribble.authservice.model.HttpStatusCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GenericAuthResponse {
 
-    private AuthErrorCode authErrorCode;
+    private HttpStatusCode httpStatusCode;
     private String message;
 
 }

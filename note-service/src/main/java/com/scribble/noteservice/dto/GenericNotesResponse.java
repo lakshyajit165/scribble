@@ -1,6 +1,6 @@
 package com.scribble.noteservice.dto;
 
-import com.scribble.noteservice.model.NotesResponseType;
+import com.scribble.noteservice.model.HttpStatusCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GenericNotesResponse {
-    private NotesResponseType notesResponseType;
+    private HttpStatusCode httpStatusCode;
     private String message;
 }

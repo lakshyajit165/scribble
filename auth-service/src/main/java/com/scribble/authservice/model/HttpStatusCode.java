@@ -1,6 +1,6 @@
-package com.scribble.noteservice.model;
+package com.scribble.authservice.model;
 
-public enum NotesResponseType {
+public enum HttpStatusCode {
     SUCCESS,
     INTERNAL_SERVER_ERROR,
     BAD_REQUEST,
