@@ -2,7 +2,6 @@ package com.scribble.noteservice.middlewares;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scribble.noteservice.dto.GenericNotesResponse;
-import com.scribble.noteservice.model.HttpStatusCode;
 import com.scribble.noteservice.security.CognitoIdTokenProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,7 +39,7 @@ public class CognitoJwtTokenFilter extends OncePerRequestFilter {
             logger.error(e.getMessage());
             SecurityContextHolder.clearContext();
             ObjectMapper mapper = new ObjectMapper();
-            GenericNotesResponse genericNotesResponse = new GenericNotesResponse(HttpStatusCode.BAD_REQUEST, e.getMessage());
+            GenericNotesResponse<Object> genericNotesResponse = new GenericNotesResponse<>(e.getMessage());
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write(mapper.writeValueAsString(genericNotesResponse));

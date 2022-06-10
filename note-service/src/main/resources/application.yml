@@ -8,6 +8,19 @@ spring:
             resourceserver:
                 jwt:
                     issuer-uri: ${SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
+    datasource:
+        url: jdbc:postgresql://192.168.240.52:5432/notesdb
+        driverClassName: org.postgresql.Driver
+        platform: postgres
+        username: ${SCRIBBLE_NOTESDB_USERNAME}
+        password: ${SCRIBBLE_NOTESDB_PASSWORD}
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+
 aws:
     cognito:
         connectionTimeout: '2000'
@@ -22,8 +35,6 @@ aws:
 
 
 logging:
-    pattern:
-        console: '%d{dd-MM-yyyy HH:mm:ss} - %msg%n'
     level:
         org:
             springframework:

@@ -23,8 +23,6 @@ aws:
 
 
 logging:
-  pattern:
-    console: '%d{dd-MM-yyyy HH:mm:ss} - %msg%n'
   level:
     org:
       springframework:
