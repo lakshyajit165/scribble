@@ -43,6 +43,7 @@ public class JwtConfiguration {
         return READ_TIMEOUT;
     }
 
+    // used to collect Authorization header(id_token)
     public String getHttpHeader() {
         return HTTP_HEADER;
     }

@@ -3,7 +3,6 @@ package com.scribble.noteservice.controller;
 import com.scribble.noteservice.dto.CreateOrUpdateNoteDTO;
 import com.scribble.noteservice.dto.GenericNotesResponse;
 import com.scribble.noteservice.exception.ResourceNotFoundException;
-import com.scribble.noteservice.model.HttpStatusCode;
 import com.scribble.noteservice.model.Note;
 import com.scribble.noteservice.service.NotesService;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,6 +35,7 @@ public class NotesController {
 
     @PostMapping("/create_note")
     public ResponseEntity<?> createNote(@Valid @RequestBody CreateOrUpdateNoteDTO createOrUpdateNoteDTO, Authentication authentication){
+        logger.info("create note called");
         try {
             Note note = notesService.createNote(createOrUpdateNoteDTO, authentication);
             return ResponseEntity.status(201).body(new GenericNotesResponse<>("Note created!", note));
