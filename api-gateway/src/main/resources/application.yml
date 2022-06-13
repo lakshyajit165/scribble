@@ -8,26 +8,27 @@ spring:
       ribbon:
         enabled: false
 
+    gateway:
       routes:
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/auth-service/**
-#          filters:
-#            - name: CircuitBreaker
-#              args:
-#                name: auth-service
-#                fallbackuri: forward:/auth-service/fallback
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: auth-service
+                fallbackuri: forward:/auth-service/fallback
 
         - id: note-service
           uri: lb://NOTE-SERVICE
           predicates:
             - Path=/note-service/**
-#          filters:
-#            - name: CircuitBreaker
-#              args:
-#                name: note-service
-#                fallbackuri: forward:/note-service/fallback
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: note-service
+                fallbackuri: forward:/note-service/fallback
 
 eureka:
   client:

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.scribble.authservice.constants.CookieConstants.ID_TOKEN;
+import static com.scribble.authservice.constants.URLConstants.*;
 import static java.util.List.of;
 
 @Component
@@ -37,15 +38,23 @@ public class CognitoIdTokenProcessor {
 //        String idToken = request.getHeader(this.jwtConfiguration.getHttpHeader());
 
         Cookie[] cookies = request.getCookies();
-//        if(cookies == cookies.length == 0)
-//            return null;
-//        String idToken = Arrays.stream(request.getCookies())
-//                .filter(c -> ID_TOKEN.equals(c.getName()))
-//                .map(Cookie::getValue)
-//                .findAny().orElse(null);
-
-//        logger.info("ID_TOKEN: " + idToken);
-        if (cookies != null) {
+       // logger.info("INSIDE AUTHENTICATE: " + request.getRequestURI());
+        List<String> allowedRoutes = Arrays.asList(SIGNUP_URL,
+                SIGNIN_URL,
+                FORGOT_PASSWORD_URL,
+                CONFIRM_PASSWORD_URL,
+                CONFIRM_FORGOT_PASSWORD_URL,
+                GET_NEW_CREDS_URL,
+                TEST_URL);
+        /**
+         * We've already added allowed routes to "permitAll" section in
+         * security config, but while using http-only cookie, browser includes this cookie
+         * for every subsequent request (on the same domain), including the allowed routes.
+         * So if cookies are present in a route which is allowed, and in the logic below if
+         * 'not null' check is applied only on cookies, system tries to validate the cookies
+         * even if a route is actually public. Hence, the route check!
+         * */
+        if (cookies != null && !allowedRoutes.contains(request.getRequestURI())) {
             String idToken = Arrays.stream(request.getCookies())
                 .filter(c -> ID_TOKEN.equals(c.getName()))
                 .map(Cookie::getValue)

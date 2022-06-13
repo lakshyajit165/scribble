@@ -26,9 +26,8 @@ dependencies {
 	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-circuitbreaker-reactor-resilience4j', version: '2.1.2'
 	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-hystrix
 	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
-
-	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.7.0'
+	// https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-micrometer
+	implementation group: 'io.github.resilience4j', name: 'resilience4j-micrometer', version: '1.7.1'
 	// https://mvnrepository.com/artifact/io.netty/netty-all
 	implementation group: 'io.netty', name: 'netty-all', version: '4.1.77.Final' // Required for local DNS resolution on MacOS, Source: https://stackoverflow.com/questions/65954571/spring-boot-2-4-2-dns-resolution-problem-at-start-on-apple-m1
 	compileOnly 'org.projectlombok:lombok'
