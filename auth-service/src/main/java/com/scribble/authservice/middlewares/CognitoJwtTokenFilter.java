@@ -41,7 +41,7 @@ public class CognitoJwtTokenFilter extends OncePerRequestFilter {
             logger.error(e.getMessage());
             SecurityContextHolder.clearContext();
             ObjectMapper mapper = new ObjectMapper();
-            GenericAuthResponse genericAuthResponse = new GenericAuthResponse(HttpStatusCode.BAD_REQUEST, e.getMessage());
+            GenericAuthResponse genericAuthResponse = new GenericAuthResponse(e.getMessage());
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write(mapper.writeValueAsString(genericAuthResponse));

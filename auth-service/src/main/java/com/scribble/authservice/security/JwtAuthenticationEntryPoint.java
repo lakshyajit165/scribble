@@ -24,7 +24,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
-        GenericAuthResponse genericAuthResponse = new GenericAuthResponse(HttpStatusCode.FORBIDDEN, "Can't access resource without proper authentication");
+        GenericAuthResponse genericAuthResponse = new GenericAuthResponse("Can't access resource without proper authentication");
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.getWriter().write(mapper.writeValueAsString(genericAuthResponse));

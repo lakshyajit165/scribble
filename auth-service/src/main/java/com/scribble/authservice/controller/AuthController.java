@@ -55,7 +55,7 @@ public class AuthController {
                     logger.info("Previous user with same email, deleted");
                 }
                 if(cognitoUserDetailsCustomResponse.getCognitoUserAccountStatus().equals(CognitoUserAccountStatus.CONFIRMED))
-                    return ResponseEntity.status(400).body(new GenericAuthResponse(HttpStatusCode.BAD_REQUEST, "A user with this email already exists!"));
+                    return ResponseEntity.status(400).body(new GenericAuthResponse("A user with this email already exists!"));
             }
 
             AdminCreateUserRequest createUserRequest = new AdminCreateUserRequest()
@@ -66,17 +66,17 @@ public class AuthController {
 
             cognitoClient.adminCreateUser(createUserRequest);
             logger.info("User created");
-            return ResponseEntity.status(200).body(new GenericAuthResponse(HttpStatusCode.SUCCESS, "Verification code sent!"));
+            return ResponseEntity.status(200).body(new GenericAuthResponse("Verification code sent!"));
 
         } catch (AWSCognitoIdentityProviderException e) {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
             logger.error(e.getErrorMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getErrorMessage()));
+            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
         }  catch (Exception e) {
             logger.error(e.getMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getMessage()));
+            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getMessage()));
         }
     }
 
@@ -109,18 +109,18 @@ public class AuthController {
                         .withChallengeResponses(newPasswordRequestParams)
                         .withSession(confirmPasswordResult.getSession());
                 cognitoClient.adminRespondToAuthChallenge(adminRespondToConfirmPasswordRequest);
-                return ResponseEntity.status(200).body(new GenericAuthResponse(HttpStatusCode.SUCCESS, "SignUp complete"));
+                return ResponseEntity.status(200).body(new GenericAuthResponse("SignUp complete"));
             }
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, "Error signing in user"));
+            return ResponseEntity.status(500).body(new GenericAuthResponse("Error signing in user"));
         } catch (AWSCognitoIdentityProviderException e) {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
             logger.error(e.getErrorMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getErrorMessage()));
+            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
         } catch (Exception e){
             logger.error(e.getMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getMessage()));
+            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getMessage()));
         }
     }
 
@@ -148,17 +148,17 @@ public class AuthController {
             return ResponseEntity
                     .status(200)
                     .header(HttpHeaders.SET_COOKIE, idTokenCookie.toString(), refreshTokenCookie.toString())
-                    .body(new GenericAuthResponse(HttpStatusCode.SUCCESS, "User signed in."));
+                    .body(new GenericAuthResponse("User signed in."));
 
         } catch (AWSCognitoIdentityProviderException e) {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
             logger.error(e.getErrorMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getErrorMessage()));
+            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
         }  catch(Exception e) {
             logger.error(e.getMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getMessage()));
+            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getMessage()));
         }
     }
 
@@ -171,17 +171,17 @@ public class AuthController {
         try {
             ForgotPasswordResult forgotPasswordResult = cognitoClient.forgotPassword(forgotPasswordRequest);
             logger.info(forgotPasswordResult.toString());
-            return ResponseEntity.status(200).body(new GenericAuthResponse(HttpStatusCode.SUCCESS, "Verification code sent to your email"));
+            return ResponseEntity.status(200).body(new GenericAuthResponse("Verification code sent to your email"));
 
         } catch (AWSCognitoIdentityProviderException e) {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
             logger.error(e.getErrorMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getErrorMessage()));
+            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
         }  catch(Exception e) {
             logger.error(e.getMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getMessage()));
+            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getMessage()));
         }
     }
 
@@ -199,17 +199,17 @@ public class AuthController {
 
             ConfirmForgotPasswordResult confirmForgotPasswordResult = cognitoClient.confirmForgotPassword(confirmForgotPasswordRequest);
             logger.info(confirmForgotPasswordResult.toString());
-            return ResponseEntity.status(200).body(new GenericAuthResponse(HttpStatusCode.SUCCESS, "Password reset successful"));
+            return ResponseEntity.status(200).body(new GenericAuthResponse("Password reset successful"));
 
         }  catch (AWSCognitoIdentityProviderException e) {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
             logger.error(e.getErrorMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getErrorMessage()));
+            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
         }  catch(Exception e) {
             logger.error(e.getMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, "Error confirming new password"));
+            return ResponseEntity.status(500).body(new GenericAuthResponse("Error confirming new password"));
         }
     }
 
@@ -225,7 +225,7 @@ public class AuthController {
          * */
 
         if(refreshToken == null || refreshToken.isEmpty())
-            return ResponseEntity.status(400).body(new GenericAuthResponse(HttpStatusCode.BAD_REQUEST, "Refresh token missing from header"));
+            return ResponseEntity.status(400).body(new GenericAuthResponse("Refresh token missing from header"));
 
         final Map<String, String> authParams = new HashMap<>();
         authParams.put("REFRESH_TOKEN", refreshToken);
@@ -244,16 +244,16 @@ public class AuthController {
             ResponseCookie idTokenCookie = ResponseCookie.from("id_token", getNewTokensResult.getIdToken())
                     .httpOnly(true)
                     .build();
-            return ResponseEntity.status(200).header(HttpHeaders.SET_COOKIE, idTokenCookie.toString()).body(new GenericAuthResponse(HttpStatusCode.SUCCESS, "success"));
+            return ResponseEntity.status(200).header(HttpHeaders.SET_COOKIE, idTokenCookie.toString()).body(new GenericAuthResponse("Fetched new creds successfully!"));
         } catch (AWSCognitoIdentityProviderException e) {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
             logger.error(e.getErrorMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getErrorMessage()));
+            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
         }  catch(Exception e) {
             logger.error(e.getMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, "Error confirming new password"));
+            return ResponseEntity.status(500).body(new GenericAuthResponse("Error confirming new password"));
         }
     }
 
@@ -261,7 +261,7 @@ public class AuthController {
     public ResponseEntity<?> userLogout(Authentication authentication) {
         String email = authentication.getName();
         if(email == null || email.isEmpty()){
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, "Error parsing email from headers"));
+            return ResponseEntity.status(500).body(new GenericAuthResponse("Error parsing email from headers"));
         }
         try {
             // logout logic here
@@ -276,16 +276,16 @@ public class AuthController {
                     .withUsername(email)
                     .withUserPoolId(userPoolId);
             AdminUserGlobalSignOutResult adminUserGlobalSignOutResult = cognitoClient.adminUserGlobalSignOut(adminUserGlobalSignOutRequest);
-            return ResponseEntity.status(200).body(new GenericAuthResponse(HttpStatusCode.SUCCESS, "User logged out"));
+            return ResponseEntity.status(200).body(new GenericAuthResponse("User logged out"));
         } catch (AWSCognitoIdentityProviderException e) {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
             logger.error(e.getErrorMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, e.getErrorMessage()));
+            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
         }  catch(Exception e) {
             logger.error(e.getMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, "Error logging out user"));
+            return ResponseEntity.status(500).body(new GenericAuthResponse("Error logging out user"));
         }
     }
 
@@ -293,18 +293,18 @@ public class AuthController {
     public ResponseEntity<?> getProtectedResource(Authentication authentication) {
 //        logger.info(authentication.);
             logger.info(authentication.getName());
-            return ResponseEntity.status(200).body(new GenericAuthResponse(HttpStatusCode.SUCCESS, "Access granted! Hello " + authentication.getName()));
+            return ResponseEntity.status(200).body(new GenericAuthResponse("Access granted! Hello " + authentication.getName()));
     }
 
     @GetMapping("/resource2")
     public ResponseEntity<?> getProtectedResource2() {
 //        logger.info(authentication.);
-        return ResponseEntity.status(200).body(new GenericAuthResponse(HttpStatusCode.SUCCESS, "Access granted 2!"));
+        return ResponseEntity.status(200).body(new GenericAuthResponse("Access granted 2!"));
     }
 
     @GetMapping("/test")
     public ResponseEntity<?> getTestResponse() {
-        return ResponseEntity.status(200).body(new GenericAuthResponse(HttpStatusCode.SUCCESS, "Auth service is up!"));
+        return ResponseEntity.status(200).body(new GenericAuthResponse("Auth service is up!"));
     }
 
     private CognitoUserDetailsCustomResponse getCognitoUserDetails(String email) {
