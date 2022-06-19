@@ -8,6 +8,7 @@ import com.scribble.authservice.model.HttpStatusCode;
 import com.scribble.authservice.model.CognitoUserAccountStatus;
 import com.scribble.authservice.model.CognitoUserStatus;
 import com.scribble.authservice.utils.PasswordGenerator;
+import org.hibernate.validator.internal.util.DomainNameUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.scribble.authservice.constants.CookieConstants.*;
 
 @RestController
 @RequestMapping("/auth-service/api/v1/auth")
@@ -37,6 +40,9 @@ public class AuthController {
 
     @Value(value = "${aws.access-secret}")
     private String secretKey;
+
+    @Value(value = "${cookieDomain}")
+    private String cookieDomain;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
@@ -139,11 +145,11 @@ public class AuthController {
             AdminInitiateAuthResult signInInitiateResult = cognitoClient.adminInitiateAuth(signInRequest);
             AuthenticationResultType signInCompleteResult = signInInitiateResult.getAuthenticationResult();
 
-            ResponseCookie idTokenCookie = ResponseCookie.from("id_token", signInCompleteResult.getIdToken())
-                    .httpOnly(true)
+            ResponseCookie idTokenCookie = ResponseCookie.from(ID_TOKEN, signInCompleteResult.getIdToken())
+                    .httpOnly(true).domain(cookieDomain).path("/")
                     .build();
-            ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", signInCompleteResult.getRefreshToken())
-                    .httpOnly(true)
+            ResponseCookie refreshTokenCookie = ResponseCookie.from(REFRESH_TOKEN, signInCompleteResult.getRefreshToken())
+                    .httpOnly(true).domain(cookieDomain).path("/")
                     .build();
             return ResponseEntity
                     .status(200)
@@ -214,7 +220,7 @@ public class AuthController {
     }
 
     @GetMapping("/get_new_creds")
-    public ResponseEntity<?> getNewTokensUsingRefreshToken(@RequestHeader("refresh_token") String refreshToken) {
+    public ResponseEntity<?> getNewTokensUsingRefreshToken(@CookieValue("refresh_token") String refreshToken) {
         /**
          * This route - while NOT included in the spring security config, works
          * because in the "authenticated" section we have only defined specific set of routes.
@@ -242,7 +248,7 @@ public class AuthController {
              * (Could add "secure" and "domain" option in production)
              * */
             ResponseCookie idTokenCookie = ResponseCookie.from("id_token", getNewTokensResult.getIdToken())
-                    .httpOnly(true)
+                    .httpOnly(true).domain(cookieDomain).path("/")
                     .build();
             return ResponseEntity.status(200).header(HttpHeaders.SET_COOKIE, idTokenCookie.toString()).body(new GenericAuthResponse("Fetched new creds successfully!"));
         } catch (AWSCognitoIdentityProviderException e) {

@@ -1,5 +1,6 @@
 package com.scribble.noteservice;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jose.proc.JWSKeySelector;
@@ -15,6 +16,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,6 +34,7 @@ public class NoteServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(NoteServiceApplication.class, args);
 	}
+
 	@Bean
 	public ConfigurableJWTProcessor<SecurityContext> configurableJWTProcessor() throws MalformedURLException {
 		ResourceRetriever resourceRetriever =
@@ -43,4 +47,5 @@ public class NoteServiceApplication {
 		jwtProcessor.setJWSKeySelector(keySelector);
 		return jwtProcessor;
 	}
+
 }

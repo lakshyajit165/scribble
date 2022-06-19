@@ -52,7 +52,8 @@ public class CognitoIdTokenProcessor {
          * for every subsequent request (on the same domain), including the allowed routes.
          * So if cookies are present in a route which is allowed, and in the logic below if
          * 'not null' check is applied only on cookies, system tries to validate the cookies
-         * even if a route is actually public. Hence, the route check!
+         * and try to check for authorization even if a route is actually public.
+         * Hence, the route check!
          * */
         if (cookies != null && !allowedRoutes.contains(request.getRequestURI())) {
             String idToken = Arrays.stream(request.getCookies())

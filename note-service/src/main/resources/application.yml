@@ -8,8 +8,11 @@ spring:
             resourceserver:
                 jwt:
                     issuer-uri: ${SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
+    jackson:
+        default-property-inclusion: non_null # to NOT include any null values in the json response
+
     datasource:
-        url: jdbc:postgresql://192.168.240.52:5432/notesdb
+        url: jdbc:postgresql://${LOCAL_DOCKER_VM_IP}:5432/notesdb
         driverClassName: org.postgresql.Driver
         platform: postgres
         username: ${SCRIBBLE_NOTESDB_USERNAME}

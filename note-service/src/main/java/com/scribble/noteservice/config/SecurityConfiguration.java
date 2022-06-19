@@ -26,6 +26,7 @@ public class SecurityConfiguration {
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfiguration.class);
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -33,10 +34,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((authz) -> {
                             try {
                                 authz
-                                        .antMatchers(
-                                                "**/health",
-                                                "/h2-console/**",
-                                                TEST_URL).permitAll()
+                                        .antMatchers(TEST_URL).permitAll()
                                         .anyRequest().authenticated()
                                         .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                         .and().addFilterBefore(cognitoJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

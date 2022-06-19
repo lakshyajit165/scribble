@@ -3,6 +3,8 @@ package com.scribble.noteservice.security;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.scribble.noteservice.config.JwtConfiguration;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,13 +12,19 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 
+import static com.scribble.noteservice.constants.CookieConstants.ID_TOKEN;
+import static com.scribble.noteservice.constants.URLConstants.TEST_URL;
 import static java.util.List.of;
 
 @Component
 public class CognitoIdTokenProcessor {
+
+    private static final Log logger = LogFactory.getLog(CognitoIdTokenProcessor.class);
 
     @Autowired
     private JwtConfiguration jwtConfiguration;
@@ -25,8 +33,27 @@ public class CognitoIdTokenProcessor {
     private ConfigurableJWTProcessor<com.nimbusds.jose.proc.SecurityContext> configurableJWTProcessor;
 
     public Authentication authenticate(HttpServletRequest request) throws Exception {
-        String idToken = request.getHeader(this.jwtConfiguration.getHttpHeader());
-        if (idToken != null) {
+//        String idToken = request.getHeader(this.jwtConfiguration.getHttpHeader());
+
+        Cookie[] cookies = request.getCookies();
+        // logger.info("INSIDE AUTHENTICATE: " + request.getRequestURI());
+        List<String> allowedRoutes = of(TEST_URL);
+        /**
+         * We've already added allowed routes to "permitAll" section in
+         * security config, but while using http-only cookie, browser includes this cookie
+         * for every subsequent request (on the same domain), including the allowed routes.
+         * So if cookies are present in a route which is allowed, and in the logic below if
+         * 'not null' check is applied only on cookies, system tries to validate the cookies
+         * and try to check for authorization even if a route is actually public.
+         * Hence, the route check!
+         * */
+        if (cookies != null && !allowedRoutes.contains(request.getRequestURI())) {
+            String idToken = Arrays.stream(request.getCookies())
+                    .filter(c -> ID_TOKEN.equals(c.getName()))
+                    .map(Cookie::getValue)
+                    .findAny().orElse(null);
+            if(idToken == null)
+                return null;
             JWTClaimsSet claims = this.configurableJWTProcessor.process(this.getBearerToken(idToken),null);
             String email = getEmailFromClaims(claims);
             validateIssuer(claims);

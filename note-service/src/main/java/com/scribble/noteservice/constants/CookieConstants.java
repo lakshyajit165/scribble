@@ -1,6 +1,4 @@
-package com.scribble.authservice.constants;
-
-import org.springframework.beans.factory.annotation.Value;
+package com.scribble.noteservice.constants;
 
 public class CookieConstants {
     public static final String ID_TOKEN = "id_token";

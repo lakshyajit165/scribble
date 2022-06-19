@@ -1,5 +1,6 @@
 package com.scribble.noteservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.scribble.noteservice.model.DateAudit.DateAudit;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,11 +12,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 import javax.ws.rs.DefaultValue;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "notes")
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // source: https://stackoverflow.com/questions/67353793/what-does-jsonignorepropertieshibernatelazyinitializer-handler-do
 public class Note extends DateAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,7 +1,9 @@
 package com.scribble.noteservice.controller;
 
-import com.scribble.noteservice.dto.CreateOrUpdateNoteDTO;
+import com.scribble.noteservice.dto.CreateNoteDTO;
 import com.scribble.noteservice.dto.GenericNotesResponse;
+import com.scribble.noteservice.dto.UpdateNoteDTO;
+import com.scribble.noteservice.exception.AccessDeniedException;
 import com.scribble.noteservice.exception.ResourceNotFoundException;
 import com.scribble.noteservice.model.Note;
 import com.scribble.noteservice.service.NotesService;
@@ -34,10 +36,10 @@ public class NotesController {
     }
 
     @PostMapping("/create_note")
-    public ResponseEntity<?> createNote(@Valid @RequestBody CreateOrUpdateNoteDTO createOrUpdateNoteDTO, Authentication authentication){
+    public ResponseEntity<?> createNote(@Valid @RequestBody CreateNoteDTO createNoteDTO, Authentication authentication){
         logger.info("create note called");
         try {
-            Note note = notesService.createNote(createOrUpdateNoteDTO, authentication);
+            Note note = notesService.createNote(createNoteDTO, authentication);
             return ResponseEntity.status(201).body(new GenericNotesResponse<>("Note created!", note));
         } catch(Exception e) {
             logger.error("Error creating note: " + e.getMessage());
@@ -56,6 +58,9 @@ public class NotesController {
                 return ResponseEntity.status(200).body(new GenericNotesResponse<>("Note found!", note));
             }
             return ResponseEntity.status(400).body(new GenericNotesResponse<>("Invalid note id!"));
+        } catch (AccessDeniedException e) {
+            logger.error("Access denied to delete note by user! " + e.getMessage());
+            return ResponseEntity.status(403).body(new GenericNotesResponse<>(e.getMessage()));
         } catch(ResourceNotFoundException e) {
             logger.error("Note with id %s not found while fetching note! " + e.getMessage(), noteId);
             return ResponseEntity.status(404).body(new GenericNotesResponse<>(e.getMessage()));
@@ -65,18 +70,21 @@ public class NotesController {
         }
     }
 
-    @PutMapping("/update_note/{noteId}")
+    @PatchMapping("/update_note/{noteId}")
     public ResponseEntity<?> updateNoteById(
-            @Valid @RequestBody CreateOrUpdateNoteDTO createOrUpdateNoteDTO,
+            @RequestBody UpdateNoteDTO updateNoteDTO,
             @PathVariable("noteId") String noteId,
             Authentication authentication
     ){
         try{
             if(noteId.matches("[0-9]+")){
-                Note note = notesService.updateNote(createOrUpdateNoteDTO, Long.parseLong(noteId), authentication);
+                Note note = notesService.updateNote(updateNoteDTO, Long.parseLong(noteId), authentication);
                 return ResponseEntity.status(200).body(new GenericNotesResponse<>("Note udpated!", note));
             }
             return ResponseEntity.status(400).body(new GenericNotesResponse<>("Invalid note id!"));
+        } catch (AccessDeniedException e) {
+            logger.error("Access denied to delete note by user! " + e.getMessage());
+            return ResponseEntity.status(403).body(new GenericNotesResponse<>(e.getMessage()));
         } catch(ResourceNotFoundException e) {
             logger.error("Note with id %s not found while updating note! " + e.getMessage(), noteId);
             return ResponseEntity.status(404).body(new GenericNotesResponse<>(e.getMessage()));
@@ -96,6 +104,9 @@ public class NotesController {
                 return ResponseEntity.status(200).body(new GenericNotesResponse<>("Note deleted!"));
             }
             return ResponseEntity.status(400).body(new GenericNotesResponse<>("Invalid note id!"));
+        } catch (AccessDeniedException e) {
+            logger.error("Access denied to delete note by user! " + e.getMessage());
+            return ResponseEntity.status(403).body(new GenericNotesResponse<>(e.getMessage()));
         } catch (ResourceNotFoundException e) {
             logger.error("Note with id %s not found while deleting note! " + e.getMessage(), noteId);
             return ResponseEntity.status(404).body(new GenericNotesResponse<>(e.getMessage()));
