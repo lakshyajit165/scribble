@@ -1,13 +1,12 @@
 package com.scribble.noteservice.dto;
 
-import com.scribble.noteservice.model.NoteType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -24,10 +23,7 @@ public class CreateNoteDTO {
     // label might be empty
     private String label;
 
-    @NotNull(message = "Note type is required")
-    private NoteType noteType;
-
-    @NotNull(message = "Completion status is required")
-    private Boolean isComplete;
+    // due date might be empty
+    private Date dueDate;
 
 }

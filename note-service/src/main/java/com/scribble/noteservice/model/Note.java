@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "notes")
@@ -37,11 +38,8 @@ public class Note extends DateAudit {
     @Column(nullable = true)
     private String label;
 
-    @Enumerated(EnumType.STRING)
-    private NoteType noteType;
-
-    @NotNull
-    private Boolean isComplete;
+    @Column(nullable = true)
+    private Date dueDate;
 
     // @NotBlank for string, @NotNull for others
 }

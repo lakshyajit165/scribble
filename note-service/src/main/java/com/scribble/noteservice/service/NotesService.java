@@ -26,8 +26,7 @@ public class NotesService {
         note.setDescription(createNoteDTO.getDescription());
         note.setAuthor(authentication.getName());
         note.setLabel(createNoteDTO.getLabel());
-        note.setNoteType(createNoteDTO.getNoteType());
-        note.setIsComplete(createNoteDTO.getIsComplete());
+        note.setDueDate(createNoteDTO.getDueDate());
         return notesRepository.save(note);
     }
 
@@ -66,9 +65,8 @@ public class NotesService {
                 || updateNoteDTO.getDescription().isBlank() ? note.getDescription() : updateNoteDTO.getDescription());
         note.setLabel(updateNoteDTO.getLabel() == null
                 || updateNoteDTO.getLabel().isBlank() ? note.getLabel() : updateNoteDTO.getLabel());
-        note.setNoteType(updateNoteDTO.getNoteType() == null
-                || updateNoteDTO.getNoteType().toString().isBlank() ? note.getNoteType() : updateNoteDTO.getNoteType());
-        note.setIsComplete(updateNoteDTO.getIsComplete());
+        note.setDueDate(updateNoteDTO.getDueDate() == null
+                || updateNoteDTO.getDueDate().toString().isBlank() ? note.getDueDate() : updateNoteDTO.getDueDate());
         return notesRepository.save(note);
 
     }
