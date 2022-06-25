@@ -33,11 +33,12 @@ public class NotesService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotesService.class);
 
-    public List<Note> getNotes(String text, String fromDate, String toDate){
+    public List<Note> getNotes(String text, String fromDate, String toDate, Authentication authentication){
         return notesRepository.findAll(new Specification<Note>() {
             @Override
             public Predicate toPredicate(Root<Note> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
+                predicates.add(criteriaBuilder.equal(root.get("author"), authentication.getName()));
                 if(text!=null) {
                     predicates.add(
                             criteriaBuilder.or(
@@ -50,8 +51,6 @@ public class NotesService {
                     predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("updatedAt"), Instant.parse(fromDate)));
                     predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("updatedAt"), Instant.parse(toDate)));
                 }
-
-
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         });

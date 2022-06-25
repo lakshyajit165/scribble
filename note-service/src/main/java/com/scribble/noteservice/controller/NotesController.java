@@ -35,11 +35,7 @@ public class NotesController {
     private static final Logger logger = LoggerFactory.getLogger(NotesController.class);
 
     @GetMapping("/test")
-    public ResponseEntity<?> getTestResponse(
-            @RequestParam(value = "startDate") String startDate,
-            @RequestParam(value = "endDate") String endDate) {
-        logger.info(startDate);
-        logger.info(endDate);
+    public ResponseEntity<?> getTestResponse() {
         return ResponseEntity.status(200).body(new GenericNotesResponse<>("Notes service is up!"));
     }
 
@@ -59,7 +55,7 @@ public class NotesController {
 
         String fromDate = updatedOnOrAfter != null ? updatedOnOrAfter + "T00:00:00Z" : null;
         String toDate = updatedOnOrBefore != null ? updatedOnOrBefore + "T23:59:59Z" : null;
-        return notesService.getNotes(text, fromDate, toDate);
+        return notesService.getNotes(text, fromDate, toDate, authentication);
 
     }
 
