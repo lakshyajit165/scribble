@@ -1,16 +1,21 @@
 package com.scribble.noteservice.service;
 
-import com.scribble.noteservice.controller.NotesController;
+import com.scribble.noteservice.constants.AppConstants;
 import com.scribble.noteservice.dto.CreateNoteDTO;
+import com.scribble.noteservice.dto.PaginatedResponse;
 import com.scribble.noteservice.dto.UpdateNoteDTO;
 import com.scribble.noteservice.exception.AccessDeniedException;
+import com.scribble.noteservice.exception.BadRequestException;
 import com.scribble.noteservice.exception.ResourceNotFoundException;
 import com.scribble.noteservice.model.Note;
 import com.scribble.noteservice.repository.NotesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -21,7 +26,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -33,8 +37,13 @@ public class NotesService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotesService.class);
 
-    public List<Note> getNotes(String text, String fromDate, String toDate, Authentication authentication){
-        return notesRepository.findAll(new Specification<Note>() {
+    public PaginatedResponse<Note> getNotes(String text, String fromDate,
+                                      String toDate, int page,
+                                      int size, Authentication authentication){
+        validatePageNumberAndSize(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "updatedAt");
+
+        Page<Note> notesPage = notesRepository.findAll(new Specification<Note>() {
             @Override
             public Predicate toPredicate(Root<Note> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
@@ -53,7 +62,8 @@ public class NotesService {
                 }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }
-        });
+        }, pageable);
+        return new PaginatedResponse<Note>(notesPage.getContent(), "Notes fetched!", page, size, notesPage.getTotalElements(), notesPage.getTotalPages(), notesPage.isLast());
     }
 
     // create a note
@@ -120,6 +130,14 @@ public class NotesService {
             throw new AccessDeniedException("Delete", "Note");
         }
         notesRepository.deleteById(noteId);
+    }
+
+    private void validatePageNumberAndSize(int page, int size) {
+        if(page < 0)
+            throw new BadRequestException("Page size cannot be less than zero.");
+        if(size > AppConstants.MAX_PAGE_SIZE)
+            throw new BadRequestException("Page size must not be greater than " + AppConstants.MAX_PAGE_SIZE);
+
     }
 
 }

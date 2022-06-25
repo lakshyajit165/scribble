@@ -1,9 +1,12 @@
 package com.scribble.noteservice.controller;
 
+import com.scribble.noteservice.constants.AppConstants;
 import com.scribble.noteservice.dto.CreateNoteDTO;
 import com.scribble.noteservice.dto.GenericNotesResponse;
+import com.scribble.noteservice.dto.PaginatedResponse;
 import com.scribble.noteservice.dto.UpdateNoteDTO;
 import com.scribble.noteservice.exception.AccessDeniedException;
+import com.scribble.noteservice.exception.BadRequestException;
 import com.scribble.noteservice.exception.ResourceNotFoundException;
 import com.scribble.noteservice.model.Note;
 import com.scribble.noteservice.service.NotesService;
@@ -16,11 +19,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -45,17 +51,36 @@ public class NotesController {
     }
 
     @GetMapping("/search")
-    public List<Note> getNotes(
+    public ResponseEntity<?> getNotes(
             @RequestParam(value = "text", required = false) String text,
             @RequestParam(value = "updatedOnOrAfter", required = false)
                 String updatedOnOrAfter,
             @RequestParam(value = "updatedOnOrBefore", required = false)
                 String updatedOnOrBefore,
+            @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size,
             Authentication authentication){
-
-        String fromDate = updatedOnOrAfter != null ? updatedOnOrAfter + "T00:00:00Z" : null;
-        String toDate = updatedOnOrBefore != null ? updatedOnOrBefore + "T23:59:59Z" : null;
-        return notesService.getNotes(text, fromDate, toDate, authentication);
+        try {
+            String fromDate = updatedOnOrAfter != null ? updatedOnOrAfter + "T00:00:00Z" : null;
+            String toDate = updatedOnOrBefore != null ? updatedOnOrBefore + "T23:59:59Z" : null;
+            return ResponseEntity.status(200).body(notesService.getNotes(text, fromDate, toDate, page, size, authentication));
+        } catch (BadRequestException e) {
+            logger.error("Error fetching notes: " + e.getMessage());
+            return ResponseEntity.status(400).body(
+                    new PaginatedResponse(
+                            Collections.<Note>emptyList(),
+                            e.getMessage(),
+                            page, size,
+                            0, 0, true));
+        } catch (Exception e) {
+            logger.error("Error fetching notes: " + e.getMessage());
+            return ResponseEntity.status(500).body(
+                    new PaginatedResponse(
+                            Collections.<Note>emptyList(),
+                            "Error fetching notes",
+                            page, size,
+                            0, 0, true));
+        }
 
     }
 
