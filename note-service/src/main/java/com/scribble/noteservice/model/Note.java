@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.groups.Default;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -39,7 +40,7 @@ public class Note extends DateAudit {
     private String label;
 
     @Column(nullable = true)
-    private Date dueDate;
+    private Instant dueDate;
 
     // @NotBlank for string, @NotNull for others
 }

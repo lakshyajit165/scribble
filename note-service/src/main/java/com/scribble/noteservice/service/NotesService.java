@@ -1,23 +1,61 @@
 package com.scribble.noteservice.service;
 
+import com.scribble.noteservice.controller.NotesController;
 import com.scribble.noteservice.dto.CreateNoteDTO;
 import com.scribble.noteservice.dto.UpdateNoteDTO;
 import com.scribble.noteservice.exception.AccessDeniedException;
 import com.scribble.noteservice.exception.ResourceNotFoundException;
 import com.scribble.noteservice.model.Note;
 import com.scribble.noteservice.repository.NotesRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 
 @Service
 public class NotesService {
 
     @Autowired
     private NotesRepository notesRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(NotesService.class);
+
+    public List<Note> getNotes(String text, String fromDate, String toDate){
+        return notesRepository.findAll(new Specification<Note>() {
+            @Override
+            public Predicate toPredicate(Root<Note> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<>();
+                if(text!=null) {
+                    predicates.add(
+                            criteriaBuilder.or(
+                                    criteriaBuilder.like(root.get("title"), "%" + text + "%"),
+                                    criteriaBuilder.like(root.get("description"), "%" + text + "%"),
+                                    criteriaBuilder.like(root.get("label"), "%" + text + "%")
+                            ));
+                }
+                if(fromDate != null && toDate != null){
+                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("updatedAt"), Instant.parse(fromDate)));
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("updatedAt"), Instant.parse(toDate)));
+                }
+
+
+                return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+        });
+    }
 
     // create a note
     public Note createNote(CreateNoteDTO createNoteDTO, Authentication authentication) {
@@ -26,7 +64,7 @@ public class NotesService {
         note.setDescription(createNoteDTO.getDescription());
         note.setAuthor(authentication.getName());
         note.setLabel(createNoteDTO.getLabel());
-        note.setDueDate(createNoteDTO.getDueDate());
+        note.setDueDate(createNoteDTO.getDueDate().toInstant());
         return notesRepository.save(note);
     }
 
@@ -66,7 +104,7 @@ public class NotesService {
         note.setLabel(updateNoteDTO.getLabel() == null
                 || updateNoteDTO.getLabel().isBlank() ? note.getLabel() : updateNoteDTO.getLabel());
         note.setDueDate(updateNoteDTO.getDueDate() == null
-                || updateNoteDTO.getDueDate().toString().isBlank() ? note.getDueDate() : updateNoteDTO.getDueDate());
+                || updateNoteDTO.getDueDate().toString().isBlank() ? note.getDueDate() : updateNoteDTO.getDueDate().toInstant());
         return notesRepository.save(note);
 
     }

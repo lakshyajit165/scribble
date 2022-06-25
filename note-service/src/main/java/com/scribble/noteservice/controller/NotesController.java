@@ -10,11 +10,20 @@ import com.scribble.noteservice.service.NotesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/note-service/api/v1/notes")
@@ -26,13 +35,32 @@ public class NotesController {
     private static final Logger logger = LoggerFactory.getLogger(NotesController.class);
 
     @GetMapping("/test")
-    public ResponseEntity<?> getTestResponse() {
+    public ResponseEntity<?> getTestResponse(
+            @RequestParam(value = "startDate") String startDate,
+            @RequestParam(value = "endDate") String endDate) {
+        logger.info(startDate);
+        logger.info(endDate);
         return ResponseEntity.status(200).body(new GenericNotesResponse<>("Notes service is up!"));
     }
 
     @GetMapping("/notes_resource")
     public ResponseEntity<?> getProtectedResource() {
         return ResponseEntity.status(200).body(new GenericNotesResponse<>("Access granted for notes service!"));
+    }
+
+    @GetMapping("/search")
+    public List<Note> getNotes(
+            @RequestParam(value = "text", required = false) String text,
+            @RequestParam(value = "updatedOnOrAfter", required = false)
+                String updatedOnOrAfter,
+            @RequestParam(value = "updatedOnOrBefore", required = false)
+                String updatedOnOrBefore,
+            Authentication authentication){
+
+        String fromDate = updatedOnOrAfter != null ? updatedOnOrAfter + "T00:00:00Z" : null;
+        String toDate = updatedOnOrBefore != null ? updatedOnOrBefore + "T23:59:59Z" : null;
+        return notesService.getNotes(text, fromDate, toDate);
+
     }
 
     @PostMapping("/create_note")

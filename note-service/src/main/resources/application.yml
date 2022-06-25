@@ -10,6 +10,10 @@ spring:
                     issuer-uri: ${SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
     jackson:
         default-property-inclusion: non_null # to NOT include any null values in the json response
+        time-zone: UTC
+        serialization:
+            WRITE_DATES_AS_TIMESTAMPS: 'false'
+
 
     datasource:
         url: jdbc:postgresql://${LOCAL_DOCKER_VM_IP}:5432/notesdb
@@ -23,6 +27,8 @@ spring:
         properties:
             hibernate:
                 dialect: org.hibernate.dialect.PostgreSQLDialect
+#                format_sql: 'true'
+#        show-sql: 'true'
 
 aws:
     cognito:
