@@ -1,0 +1,22 @@
+.login-section {
+    margin-top: 180px;
+}
+
+.login-card {
+    max-width: 450px;
+}
+
+.form-field-width {
+    width: 100%;
+}
+
+.center-text {
+    display: flex;
+    justify-content: center;
+}
+
+.scribble-icon {
+    font-size: 50px;
+    height: 50px;
+    width: 50px;
+}

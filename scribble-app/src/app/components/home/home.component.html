@@ -1,0 +1,39 @@
+<mat-sidenav-container class="sidenav-container" >
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+  >
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item><span class="nav-list-icon"><mat-icon>home</mat-icon></span>Home</a>
+     
+      <a mat-list-item><span class="nav-list-icon"><mat-icon>note_add</mat-icon></span>Add Note</a>
+      
+      <a mat-list-item><span class="nav-list-icon"><mat-icon>exit_to_app</mat-icon></span>Logout</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        >
+        
+        <mat-icon aria-label="Side nav toggle icon" *ngIf="!drawer.opened; else elseBlock">menu</mat-icon>
+        <ng-template #elseBlock><mat-icon aria-label="Side nav toggle icon">keyboard_arrow_left</mat-icon></ng-template>
+     
+      </button>
+      <span>Scribble</span>
+    </mat-toolbar>
+    <!-- Add Content Here -->
+    <div class="mat-app-background" style="min-height: 95vh;
+    display: flex;
+    flex-direction: column;">
+      <router-outlet></router-outlet>
+    </div>
+    
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
