@@ -18,28 +18,29 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatMenuModule} from '@angular/material/menu';
+import {MatStepperModule} from '@angular/material/stepper';
 
 const materialComponents = [
-   MatCardModule,
-   MatButtonModule,
-   MatInputModule,
-   MatDividerModule,
-   MatSidenavModule,
-   MatToolbarModule,
-   MatIconModule,
-   MatListModule,
-   MatChipsModule,
-   MatSelectModule,
-   MatDatepickerModule,
-   MatNativeDateModule,
-   MatRadioModule,
-   MatFormFieldModule,
-   MatSnackBarModule,
-   MatProgressSpinnerModule,
-   MatDialogModule,
-   MatSlideToggleModule,
-   MatMenuModule
-
+    MatCardModule,
+    MatButtonModule,
+    MatInputModule,
+    MatDividerModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatListModule,
+    MatChipsModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatRadioModule,
+    MatFormFieldModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
+    MatDialogModule,
+    MatSlideToggleModule,
+    MatMenuModule,
+    MatStepperModule
 ];
 
 @NgModule({
