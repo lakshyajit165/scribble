@@ -26,7 +26,7 @@ import java.util.Map;
 import static com.scribble.authservice.constants.CookieConstants.*;
 
 @RestController
-@RequestMapping("/auth-service/api/v1/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     @Autowired

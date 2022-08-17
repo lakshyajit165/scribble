@@ -11,7 +11,7 @@
         </mat-card-header>
         <mat-card-content>
             <mat-stepper [linear]="true" #stepper>
-                <mat-step [stepControl]="emailFormGroup">
+                <mat-step [stepControl]="emailFormGroup" [editable]="false">
                     <form [formGroup]="emailFormGroup">
                         <ng-template matStepLabel class="stepper-label">Verify Email</ng-template>
                         <mat-form-field appearance="outline" class="form-field-width">
@@ -21,7 +21,7 @@
                             <mat-error>Invalid Email!</mat-error>
                         </mat-form-field>
                         <div>
-                            <button mat-raised-button color="primary" matStepperNext>Next</button>
+                            <button mat-raised-button color="primary" (click)="verifyEmail(stepper)">Verify</button>
                         </div>
                     </form>
                 </mat-step>
@@ -38,11 +38,11 @@
                         <mat-form-field appearance="outline" class="form-field-width">
                             <mat-label>Password</mat-label>
                             <input matInput formControlName="password" placeholder="Set a password"
-                                [errorStateMatcher]="_matcher" required>
+                                [errorStateMatcher]="_matcher" type="password">
                             <mat-error>Password is required!</mat-error>
                         </mat-form-field>
                         <div>
-                            <button mat-raised-button color="primary">Sign Up</button>
+                            <button mat-raised-button color="primary" (click)="signUpUser()">Sign Up</button>
                             <button mat-button (click)="stepper.reset()" color="primary">Reset</button>
                         </div>
                     </form>

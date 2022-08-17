@@ -56,10 +56,10 @@ public class NotesService {
                                     criteriaBuilder.like(root.get("label"), "%" + text + "%")
                             ));
                 }
-                if(fromDate != null && toDate != null){
+                if(fromDate != null)
                     predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("updatedAt"), Instant.parse(fromDate)));
+                if(toDate != null)
                     predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("updatedAt"), Instant.parse(toDate)));
-                }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         }, pageable);
@@ -72,8 +72,10 @@ public class NotesService {
         note.setTitle(createNoteDTO.getTitle());
         note.setDescription(createNoteDTO.getDescription());
         note.setAuthor(authentication.getName());
-        note.setLabel(createNoteDTO.getLabel());
-        note.setDueDate(createNoteDTO.getDueDate().toInstant());
+        note.setLabel(createNoteDTO.getLabel() == null
+                || createNoteDTO.getLabel().isBlank() ? null : createNoteDTO.getLabel());
+        note.setDueDate(createNoteDTO.getDueDate() == null
+                || createNoteDTO.getDueDate().toString().isBlank() ? null : createNoteDTO.getDueDate().toInstant());
         return notesRepository.save(note);
     }
 

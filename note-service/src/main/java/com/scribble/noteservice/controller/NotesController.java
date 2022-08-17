@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Locale;
 
 @RestController
-@RequestMapping("/note-service/api/v1/notes")
+@RequestMapping("/api/v1/notes")
 public class NotesController {
 
     @Autowired

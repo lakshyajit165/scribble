@@ -9,6 +9,10 @@ spring:
         enabled: false
 
     gateway:
+      default-filters:
+        - StripPrefix=1
+        # source: https://cloud.spring.io/spring-cloud-gateway/reference/html/#the-stripprefix-gatewayfilter-factory
+        # https://stackoverflow.com/questions/67069781/spring-gateway-how-to-strip-prefix-for-all-routes-only-once
       routes:
         - id: auth-service
           uri: lb://AUTH-SERVICE
