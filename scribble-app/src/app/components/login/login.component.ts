@@ -7,7 +7,7 @@ import {
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { IUserLogin } from '../../model/IUserLogin';
+import { ILogin } from '../../model/ILogin';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
   _verticalPosition: MatSnackBarVerticalPosition = 'top';
 
   _formGroup: FormGroup;
-  _user: IUserLogin = {
+  _user: ILogin = {
     email: '',
     password: ''
   };

@@ -15,7 +15,8 @@ public class CircuitBreakerConfiguration {
 
     /** in github the 'ofSeconds' was set to 1, set it to 5 to allow a little buffer for
      * downstream services to respond
-     * Article about Timelimiter: https://reflectoring.io/time-limiting-with-resilience4j/#when-to-use-the-resilience4j-timelimiter
+     * Article about Timelimiter:
+     * https://reflectoring.io/time-limiting-with-resilience4j/#when-to-use-the-resilience4j-timelimiter
     */
     private static final Duration TIMEOUT = Duration.ofSeconds(5);
 

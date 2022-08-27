@@ -21,7 +21,7 @@
                             <mat-error>Invalid Email!</mat-error>
                         </mat-form-field>
                         <div>
-                            <button mat-raised-button color="primary" (click)="verifyEmail(stepper)">Verify</button>
+                            <button mat-raised-button color="primary" (click)="signUpUser(stepper)">Verify</button>
                         </div>
                     </form>
                 </mat-step>
@@ -42,7 +42,7 @@
                             <mat-error>Password is required!</mat-error>
                         </mat-form-field>
                         <div>
-                            <button mat-raised-button color="primary" (click)="signUpUser()">Sign Up</button>
+                            <button mat-raised-button color="primary" (click)="confirmPassword()">Sign Up</button>
                             <button mat-button (click)="stepper.reset()" color="primary">Reset</button>
                         </div>
                     </form>

@@ -31,6 +31,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+        /**
+         * Adds a CorsFilter to be used. If a bean by the name of corsFilter is provided,
+         * that CorsFilter is used.
+         * Else if corsConfigurationSource is defined, then that CorsConfiguration is used.
+         * Otherwise, if Spring MVC is on the classpath a HandlerMappingIntrospector is used.
+         * */
         http.cors()
                 .and().csrf().disable()
                 .authorizeHttpRequests((authz) -> {

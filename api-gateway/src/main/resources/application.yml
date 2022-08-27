@@ -7,7 +7,6 @@ spring:
     loadbalancer:
       ribbon:
         enabled: false
-
     gateway:
       default-filters:
         - StripPrefix=1
