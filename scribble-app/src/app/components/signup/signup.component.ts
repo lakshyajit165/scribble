@@ -1,9 +1,13 @@
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, FormControl, AbstractControl, FormGroupDirective, NgForm, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import { MatStepper } from '@angular/material/stepper';
+import { IGenericAuthResponse } from 'src/app/model/IGenericAuthResponse';
 import { ISignUpAndForgotPassword } from 'src/app/model/ISignUpAndForgotPassword';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { SnackbarService } from 'src/app/utils/snackbar.service';
+
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
@@ -21,7 +25,8 @@ export class SignupComponent implements OnInit {
 
   constructor(
     private _formBuilder: FormBuilder,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _snackBarService: SnackbarService
   ) { }
 
   ngOnInit(): void {
@@ -42,6 +47,7 @@ export class SignupComponent implements OnInit {
     email: ''
   };
   
+  signUpAndForgotPasswordLoading: boolean = false;
   // verifyEmail(stepper: MatStepper): void {
   //   // logic to verify email => if success then go to next step
   //   console.log("inside function");
@@ -49,24 +55,37 @@ export class SignupComponent implements OnInit {
   // }
 
   signUpUser(stepper: MatStepper): void {
+    // make loading to true
+    this.signUpAndForgotPasswordLoading = true;
     // get the values from both forms
     if(this.emailFormGroup.valid){
       this.signUpAndForgotPassword.email = this.emailFormGroup.get('email')?.value ?? '';
       this._authService.signUp(this.signUpAndForgotPassword).subscribe({
-        next: response => {
-          console.log(response);
+        next: (data: IGenericAuthResponse) => {
+          this.signUpAndForgotPasswordLoading = false;
+          this._snackBarService.showSnackBar(data.message, 3000, 'check_circle_outline');
+          stepper.next();
         },
         error: err => {
-          console.log(err);
+          this.signUpAndForgotPasswordLoading = false;
+          if(err.error && err.error.message) {
+            this._snackBarService.showSnackBar(err.error.message, 3000, 'error_outline');
+          }else{
+            this._snackBarService.showSnackBar("An error occurred. Please try again!", 3000, 'error_outline');
+          }
         } 
       })
+    }else{
+      this._snackBarService.showSnackBar("Invalid data!", 3000, 'error_outline');
     }
     
     
   }
 
   confirmPassword(): void {
-    
+
   }
+
+ 
 
 }

@@ -1,0 +1,12 @@
+.snackbar-data {
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.message {
+    justify-content: flex-start;
+    margin-right: 8px;
+}

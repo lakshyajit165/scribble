@@ -17,13 +17,17 @@ import { MaterialModule } from './material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { httpInterceptorProviders } from './providers/http.interceptor';
 import { HttpClientModule } from '@angular/common/http';
+import { SnackbarComponent } from './components/snackbar/snackbar.component';
+import { TruncatePipe } from './utils/truncate.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    SnackbarComponent,
+    TruncatePipe
   ],
   imports: [
     BrowserModule,
