@@ -20,3 +20,13 @@
     height: 50px;
     width: 50px;
 }
+.signup-link {
+    text-decoration: none;
+    margin-left: 5px;
+    color: rgb(0, 136, 255)
+}
+
+.forgot-pwd-link {
+    text-decoration: none;
+    color: rgb(0, 136, 255)
+}

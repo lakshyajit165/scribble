@@ -7,6 +7,9 @@ import {
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { IGenericAuthResponse } from 'src/app/model/IGenericAuthResponse';
+import { AuthService } from 'src/app/services/auth/auth.service';
+import { SnackbarService } from 'src/app/utils/snackbar.service';
 import { ILogin } from '../../model/ILogin';
 
 /** Error when invalid control is dirty, touched, or submitted. */
@@ -24,33 +27,55 @@ export class CustomErrorStateMatcher implements ErrorStateMatcher {
 })
 export class LoginComponent implements OnInit {
 
-  _matcher = new CustomErrorStateMatcher();
-
-  _horizontalPosition: MatSnackBarHorizontalPosition = 'right';
-  _verticalPosition: MatSnackBarVerticalPosition = 'top';
-
-  _formGroup: FormGroup;
-  _user: ILogin = {
-    email: '',
-    password: ''
-  };
-
   constructor(
     private _router: Router,
     private _formBuilder: FormBuilder,
-    private _snackBar: MatSnackBar
-
+    private _authService: AuthService,
+    private _snackBarService: SnackbarService
   ) { 
-    this._formGroup = this._formBuilder.group({
-      email: ['',  [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
-      
-    });
   }
 
   ngOnInit(): void {
-    
+  }
 
+  _matcher = new CustomErrorStateMatcher();
+
+  horizontalPosition: MatSnackBarHorizontalPosition = 'center';
+  verticalPosition: MatSnackBarVerticalPosition = 'bottom';
+  userLoginPayload: ILogin = {
+    email: '',
+    password: ''
+  };
+  loginFormGroup = this._formBuilder.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]]
+  });
+  loginUserLoading: boolean = false;
+
+  login(): void {
+    this.loginUserLoading = true;
+    // get the values from both forms
+    if(this.loginFormGroup.valid){
+      this.userLoginPayload.email = this.loginFormGroup.get('email')?.value ?? '';
+      this.userLoginPayload.password = this.loginFormGroup.get('password')?.value ?? '';
+      this._authService.login(this.userLoginPayload).subscribe({
+        next: (data: IGenericAuthResponse) => {
+          this.loginUserLoading = false;
+          // set cookie as behaviour subject and route to dashboard
+        },
+        error: err => {
+          this.loginUserLoading = false;
+          if(err.error && err.error.message) {
+            this._snackBarService.showSnackBar(err.error.message, 3000, 'error_outline');
+          }else{
+            this._snackBarService.showSnackBar("An error occurred. Please try again!", 3000, 'error_outline');
+          }
+        } 
+      })
+    }else{
+      this.loginUserLoading = false;
+      this._snackBarService.showSnackBar("Invalid data!", 3000, 'error_outline');
+    }
   }
 
 }

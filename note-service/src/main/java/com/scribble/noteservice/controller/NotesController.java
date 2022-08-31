@@ -19,17 +19,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+
 import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+
 
 @RestController
 @RequestMapping("/api/v1/notes")

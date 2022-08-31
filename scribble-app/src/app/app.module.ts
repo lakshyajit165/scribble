@@ -19,6 +19,8 @@ import { httpInterceptorProviders } from './providers/http.interceptor';
 import { HttpClientModule } from '@angular/common/http';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { TruncatePipe } from './utils/truncate.pipe';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,8 @@ import { TruncatePipe } from './utils/truncate.pipe';
     LoginComponent,
     SignupComponent,
     SnackbarComponent,
-    TruncatePipe
+    TruncatePipe,
+    ForgotPasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -39,7 +42,7 @@ import { TruncatePipe } from './utils/truncate.pipe';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [httpInterceptorProviders],
+  providers: [httpInterceptorProviders, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

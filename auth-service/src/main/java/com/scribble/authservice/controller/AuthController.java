@@ -3,6 +3,8 @@ package com.scribble.authservice.controller;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.*;
 
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.scribble.authservice.dto.*;
 import com.scribble.authservice.model.HttpStatusCode;
 import com.scribble.authservice.model.CognitoUserAccountStatus;
@@ -20,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -261,6 +264,39 @@ public class AuthController {
             logger.error(e.getMessage());
             return ResponseEntity.status(500).body(new GenericAuthResponse("Error confirming new password"));
         }
+    }
+
+    /**
+     * returns
+     * {
+     *     "message": "Expired JWT" - incase of expired token(sent by CognitoJwtTokenFilter)
+     * }
+     * or
+     * {
+     *     "message": true(or)false - true in case the token is valid, false, if the token
+     *     can't be parsed somehow
+     * }
+     *
+     * */
+    @GetMapping("/is_loggedin")
+    public ResponseEntity<?> isUserLoggedIn(@CookieValue("id_token") String idToken){
+        try {
+            if(idToken != null) {
+                SignedJWT signedJWT = SignedJWT.parse(idToken);
+                JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+                Map<String, Object> idTokenClaim = claimsSet.getClaims();
+                // if expiry_at timestamp is greater than current timestamp, return false, else return true
+                if(idTokenClaim.get("exp").toString().compareTo(idTokenClaim.get("iat").toString()) > 0)
+                    return ResponseEntity.status(200).body(new GenericAuthResponse("true"));
+                return ResponseEntity.status(200).body(new GenericAuthResponse("false"));
+            }else{
+                return ResponseEntity.status(400).body(new GenericAuthResponse("false"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new GenericAuthResponse("false"));
+        }
+
+
     }
 
     @PostMapping("/logout")
