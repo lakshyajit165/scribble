@@ -22,7 +22,14 @@
                         type="password">
                     <mat-error>Password is required!</mat-error>
                 </mat-form-field>
-                <button mat-raised-button color="primary" class="form-field-width mb-2">Login</button>
+                <button mat-raised-button color="primary" class="form-field-width mb-2" [disabled]="loginUserLoading" (click)="login()">
+                    <span *ngIf="!loginUserLoading;else show_spinner">Login</span>
+                    <ng-template #show_spinner>
+                        <span>
+                            Logging in..
+                        </span>
+                    </ng-template>
+                </button>
                 <small>
                     <a routerLink="/forgot-password" class="forgot-pwd-link">Forgot Password</a>
                 </small>

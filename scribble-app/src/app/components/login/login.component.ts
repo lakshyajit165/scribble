@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit {
       this._authService.login(this.userLoginPayload).subscribe({
         next: (data: IGenericAuthResponse) => {
           this.loginUserLoading = false;
-          // set cookie as behaviour subject and route to dashboard
+          this._router.navigate(['/home']);
         },
         error: err => {
           this.loginUserLoading = false;

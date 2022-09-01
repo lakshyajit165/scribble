@@ -20,7 +20,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { TruncatePipe } from './utils/truncate.pipe';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
-import { CookieService } from 'ngx-cookie-service';
+import { AuthGuard } from './services/auth/auth.guard';
+import { AuthRouteGuard } from './services/auth/authroute.guard';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { CookieService } from 'ngx-cookie-service';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [httpInterceptorProviders, CookieService],
+  providers: [httpInterceptorProviders, AuthGuard, AuthRouteGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

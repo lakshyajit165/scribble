@@ -6,20 +6,28 @@ import { IGenericAuthResponse } from 'src/app/model/IGenericAuthResponse';
 import { ILogin } from 'src/app/model/ILogin';
 import { ISignUpAndForgotPassword } from 'src/app/model/ISignUpAndForgotPassword';
 import { map } from "rxjs/operators";
-import { CookieService } from 'ngx-cookie-service';
+import { Router } from '@angular/router';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  apiGateWay: string = 'http://localhost:9000/'
+  apiGateWay: string = 'http://localhost:9000/';
+  private isUserLoggedIn: BehaviorSubject<boolean>;
+  
   constructor(
     private _http: HttpClient,
-    private _cookieService: CookieService
-  ) { }
+    private _router: Router,
+  ) { 
+    this.isUserLoggedIn = new BehaviorSubject<boolean>(false);
+  }
 
-  isUserLoggedIn = new BehaviorSubject<boolean>(this.isCookiePresent());
+  public get loggedInStatus(): boolean {
+    return this.isUserLoggedIn.value;
+  }
+  
   
   signUp(signUpPayload: ISignUpAndForgotPassword): Observable<IGenericAuthResponse> {
     return this._http.post<IGenericAuthResponse>(this.apiGateWay + "auth-service/api/v1/auth/sign_up", signUpPayload).pipe(
@@ -35,7 +43,16 @@ export class AuthService {
 
   login(loginPayload: ILogin): Observable<IGenericAuthResponse> {
     return this._http.post(this.apiGateWay + "auth-service/api/v1/auth/sign_in", loginPayload).pipe(
-      map(response => response as IGenericAuthResponse)
+      map(response => {
+        const authReponse = response as IGenericAuthResponse;
+        if(authReponse.message === "User signed in."){
+          this.isUserLoggedIn.next(true);
+          return authReponse;
+        }else{
+          this.isUserLoggedIn.next(false);
+          return authReponse;
+        }
+      })
     );
   }
 
@@ -57,22 +74,11 @@ export class AuthService {
     );
   }
 
-  logout(): Observable<IGenericAuthResponse> {
-    return this._http.post(this.apiGateWay + "auth-service/api/v1/auth/logout", {}).pipe(
-      map(response => response as IGenericAuthResponse)
-    );
+  logout(): void {
+    this._http.post(this.apiGateWay + "auth-service/api/v1/auth/logout", {}).subscribe();
+    this.isUserLoggedIn.next(false);
+    this._router.navigate(['/login']);
   }
 
-  setUserLoggedInStatus(status: boolean): void {
-    this.isUserLoggedIn.next(status);
-  }
-
-  isCookiePresent() : boolean {
-    return !!this._cookieService.get('isLoggedIn');
-  }
-
-  isLoggedIn() : Observable<boolean> {
-    return this.isUserLoggedIn.asObservable();
-  }
 
 }

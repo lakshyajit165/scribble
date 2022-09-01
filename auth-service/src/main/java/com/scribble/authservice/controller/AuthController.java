@@ -163,8 +163,8 @@ public class AuthController {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
-            logger.error(e.getErrorMessage());
-            return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
+            logger.error(e.getErrorMessage() + " " + e.getErrorCode());
+            return ResponseEntity.status(e.getStatusCode()).body(new GenericAuthResponse(e.getErrorMessage()));
         }  catch(Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(500).body(new GenericAuthResponse(e.getMessage()));
@@ -186,7 +186,7 @@ public class AuthController {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
-            logger.error(e.getErrorMessage());
+            logger.error(e.getErrorMessage() + " " + e.getErrorCode());
             return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
         }  catch(Exception e) {
             logger.error(e.getMessage());
@@ -214,7 +214,7 @@ public class AuthController {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
-            logger.error(e.getErrorMessage());
+            logger.error(e.getErrorMessage() + " " + e.getErrorCode());
             return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
         }  catch(Exception e) {
             logger.error(e.getMessage());
@@ -258,7 +258,7 @@ public class AuthController {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
-            logger.error(e.getErrorMessage());
+            logger.error(e.getErrorMessage() + " " + e.getErrorCode());
             return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
         }  catch(Exception e) {
             logger.error(e.getMessage());
@@ -323,7 +323,7 @@ public class AuthController {
             /**
              * Base exception for all service exceptions thrown by Amazon Cognito Identity Provider
              * */
-            logger.error(e.getErrorMessage());
+            logger.error(e.getErrorMessage() + " " + e.getErrorCode());
             return ResponseEntity.status(500).body(new GenericAuthResponse(e.getErrorMessage()));
         }  catch(Exception e) {
             logger.error(e.getMessage());
