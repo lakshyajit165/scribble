@@ -7,6 +7,7 @@ import { ILogin } from 'src/app/model/ILogin';
 import { ISignUpAndForgotPassword } from 'src/app/model/ISignUpAndForgotPassword';
 import { map } from "rxjs/operators";
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @Injectable({
@@ -15,17 +16,22 @@ import { Router } from '@angular/router';
 export class AuthService {
 
   apiGateWay: string = 'http://localhost:9000/';
-  private isUserLoggedIn: BehaviorSubject<boolean>;
+  isUserLoggedIn: BehaviorSubject<boolean>;
   
   constructor(
     private _http: HttpClient,
     private _router: Router,
+    private _cookieService: CookieService
   ) { 
     this.isUserLoggedIn = new BehaviorSubject<boolean>(false);
   }
 
   public get loggedInStatus(): boolean {
     return this.isUserLoggedIn.value;
+  }
+
+  public setLoggedInStatus(status: boolean): void {
+    this.isUserLoggedIn.next(status);
   }
   
   
@@ -42,11 +48,15 @@ export class AuthService {
   }
 
   login(loginPayload: ILogin): Observable<IGenericAuthResponse> {
-    return this._http.post(this.apiGateWay + "auth-service/api/v1/auth/sign_in", loginPayload).pipe(
+    return this._http.post(this.apiGateWay + "auth-service/api/v1/auth/sign_in", loginPayload, ).pipe(
       map(response => {
         const authReponse = response as IGenericAuthResponse;
+        const expirationTime: Date = new Date();
+        expirationTime.setHours(expirationTime.getHours() + 1);
         if(authReponse.message === "User signed in."){
           this.isUserLoggedIn.next(true);
+          // this._cookieService.set('userLoggedIn', 'true', { expires: expirationTime});
+          // console.log(this._cookieService.get('userLoggedIn'));
           return authReponse;
         }else{
           this.isUserLoggedIn.next(false);
@@ -77,6 +87,7 @@ export class AuthService {
   logout(): void {
     this._http.post(this.apiGateWay + "auth-service/api/v1/auth/logout", {}).subscribe();
     this.isUserLoggedIn.next(false);
+    // this._cookieService.delete('userLoggedIn');
     this._router.navigate(['/login']);
   }
 

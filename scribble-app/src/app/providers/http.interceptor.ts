@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from '../services/auth/auth.service';
 
 /**
  * @source: https://www.bezkoder.com/angular-13-jwt-auth-httponly-cookie/
@@ -12,6 +13,8 @@ import { Observable } from 'rxjs';
  * */
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
+
+  constructor(private _authService: AuthService) {}
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     req = req.clone({
       withCredentials: true,
@@ -19,6 +22,6 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     return next.handle(req);
   }
 }
-export const httpInterceptorProviders = [
-  { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
-];
+// export const httpInterceptorProviders = [
+//   { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
+// ];
