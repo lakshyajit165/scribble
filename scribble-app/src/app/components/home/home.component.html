@@ -7,9 +7,13 @@
     <mat-nav-list>
       <a mat-list-item><span class="nav-list-icon"><mat-icon>home</mat-icon></span>Home</a>
      
-      <a mat-list-item><span class="nav-list-icon"><mat-icon>note_add</mat-icon></span>Add Note</a>
+      <a mat-list-item (click)="goToComponnent('home/scribbles/add')"><span class="nav-list-icon">
+          <mat-icon>note_add</mat-icon>
+        </span>Add Note</a>
       
-      <a mat-list-item><span class="nav-list-icon"><mat-icon>exit_to_app</mat-icon></span>Logout</a>
+      <a mat-list-item (click)="logout()"><span class="nav-list-icon">
+          <mat-icon>exit_to_app</mat-icon>
+        </span>Logout</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

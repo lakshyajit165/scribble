@@ -19,11 +19,12 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { TruncatePipe } from './utils/truncate.pipe';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
-import { AuthGuard } from './services/auth/auth.guard';
-import { AuthRouteGuard } from './services/auth/authroute.guard';
+import { AuthGuard } from './utils/auth.guard';
+import { AuthRouteGuard } from './utils/authroute.guard';
 import { AuthService } from './services/auth/auth.service';
 import { HttpRequestInterceptor } from './providers/http.interceptor';
 import { CookieService } from 'ngx-cookie-service';
+import { AddScribbleComponent } from './components/add-scribble/add-scribble.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { CookieService } from 'ngx-cookie-service';
     SignupComponent,
     SnackbarComponent,
     TruncatePipe,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    AddScribbleComponent
   ],
   imports: [
     BrowserModule,
