@@ -19,6 +19,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatStepperModule} from '@angular/material/stepper';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 const materialComponents = [
     MatCardModule,
@@ -40,7 +41,8 @@ const materialComponents = [
     MatDialogModule,
     MatSlideToggleModule,
     MatMenuModule,
-    MatStepperModule
+    MatStepperModule,
+    MatProgressBarModule
 ];
 
 @NgModule({

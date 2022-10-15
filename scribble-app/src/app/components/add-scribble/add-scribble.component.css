@@ -1,0 +1,14 @@
+.add-scribble-section {
+    margin-top: 60px;
+}
+
+.add-scribble-header {
+    display: inline-flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.form-field-width {
+    width: 100%;
+}
