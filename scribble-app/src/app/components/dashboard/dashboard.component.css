@@ -1,0 +1,20 @@
+.dashboard-section {
+    margin-top: 40px;
+}
+
+.dashboard-header {
+    display: inline-flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.form-field-width {
+    width: 100%;
+}
+
+.outline {
+    border-style: solid;
+    border-width: 0.2px;
+    border-color: rgb(202, 202, 202);
+}

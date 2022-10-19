@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AddScribbleComponent } from './components/add-scribble/add-scribble.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
@@ -9,12 +10,18 @@ import { AuthGuard } from './utils/auth.guard';
 import { AuthRouteGuard } from './utils/authroute.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '', redirectTo: 'home/dashboard', pathMatch: 'full' },
   {
     path: 'home',
     component: HomeComponent,
     canActivate: [AuthGuard],
     children: [
+      {
+        path: '', redirectTo: 'dashboard', pathMatch: 'full'
+      },
+      {
+        path: 'dashboard', component: DashboardComponent, canActivateChild: [AuthGuard]
+      },
       {
         path: 'scribbles/add', component: AddScribbleComponent, canActivateChild: [AuthGuard]
       },

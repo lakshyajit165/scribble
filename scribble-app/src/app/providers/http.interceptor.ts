@@ -32,7 +32,6 @@ export class HttpRequestInterceptor implements HttpInterceptor {
       return next.handle(req).pipe(catchError((err: HttpErrorResponse) => {
         if (err.status === 401 && !this.refresh) {
           this.refresh = true;
-  
           return this._http.get('http://localhost:9000/auth-service/api/v1/auth/get_new_creds', {withCredentials: true}).pipe(
             switchMap((res: any) => {
       

@@ -1,5 +1,5 @@
 server:
-  port: 9000
+  port: ${SCRIBBLE_API_GATEWAY_PORT}
 spring:
   application:
     name: api-gateway
@@ -38,9 +38,9 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_CLIENT_DEFAULTZONE}
     healthcheck:
       enabled: true
   instance:
-    hostname: localhost
+    prefer-ip-address: true
 

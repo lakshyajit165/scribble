@@ -37,7 +37,7 @@ public class NotesService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotesService.class);
 
-    public PaginatedResponse<Note> getNotes(String text, String fromDate,
+    public PaginatedResponse<Note> getNotes(String searchText, String fromDate,
                                       String toDate, int page,
                                       int size, Authentication authentication){
         validatePageNumberAndSize(page, size);
@@ -48,12 +48,12 @@ public class NotesService {
             public Predicate toPredicate(Root<Note> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
                 predicates.add(criteriaBuilder.equal(root.get("author"), authentication.getName()));
-                if(text!=null) {
+                if(searchText!=null) {
                     predicates.add(
                             criteriaBuilder.or(
-                                    criteriaBuilder.like(root.get("title"), "%" + text + "%"),
-                                    criteriaBuilder.like(root.get("description"), "%" + text + "%"),
-                                    criteriaBuilder.like(root.get("label"), "%" + text + "%")
+                                    criteriaBuilder.like(root.get("title"), "%" + searchText + "%"),
+                                    criteriaBuilder.like(root.get("description"), "%" + searchText + "%"),
+                                    criteriaBuilder.like(root.get("label"), "%" + searchText + "%")
                             ));
                 }
                 if(fromDate != null)

@@ -1,0 +1,84 @@
+version: "3.8"
+services:
+    scribble-app:
+        platform: linux/amd64
+        build:
+            context: ./scribble-app
+        ports:
+            - "4200:4200"
+        container_name: scribble-app
+        depends_on:
+            [api-gateway, service-discovery]
+        
+    api-gateway:
+        platform: linux/amd64
+        build:
+            context: ./api-gateway
+        ports:
+            - "9000:9000"
+        container_name: api-gateway
+        depends_on: 
+            [service-discovery]
+        environment:
+            - SCRIBBLE_API_GATEWAY_PORT=${SCRIBBLE_API_GATEWAY_PORT}
+            - EUREKA_CLIENT_DEFAULTZONE=${EUREKA_CLIENT_DEFAULTZONE}
+       
+
+    service-discovery:
+        platform: linux/amd64
+        build:
+            context: ./service-discovery
+        ports:
+            - "8761:8761"
+        container_name: service-discovery
+        environment:
+            - SCRIBBLE_SERVICE_DISCOVERY_PORT=${SCRIBBLE_SERVICE_DISCOVERY_PORT}
+
+    auth-service:
+        platform: linux/amd64
+        build:
+            context: ./auth-service
+        ports:
+            - "9001:9001"
+        container_name: auth-service
+        depends_on:
+            [api-gateway, service-discovery]
+        environment:
+            - SCRIBBLE_AUTH_SERVICE_PORT=${SCRIBBLE_AUTH_SERVICE_PORT}
+            - SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=${SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
+            - SCRIBBLE_AUTH_AWS_COGNITO_USERPOOL_ID=${SCRIBBLE_AUTH_AWS_COGNITO_USERPOOL_ID}
+            - SCRIBBLE_AUTH_AWS_COGNITO_JWK=${SCRIBBLE_AUTH_AWS_COGNITO_JWK}
+            - SCRIBBLE_AUTH_AWS_COGNITO_CLIENT_ID=${SCRIBBLE_AUTH_AWS_COGNITO_CLIENT_ID}
+            - SCRIBBLE_AUTH_AWS_COGNITO_REGION=${SCRIBBLE_AUTH_AWS_COGNITO_REGION}
+            - SCRIBBLE_AUTH_AWS_ACCESS_KEY=${SCRIBBLE_AUTH_AWS_ACCESS_KEY}
+            - SCRIBBLE_AUTH_AWS_SECRET_KEY=${SCRIBBLE_AUTH_AWS_SECRET_KEY}
+            - SCRIBBLE_AUTH_AWS_DEFAULT_REGION=${SCRIBBLE_AUTH_AWS_DEFAULT_REGION}
+            - EUREKA_CLIENT_DEFAULTZONE=${EUREKA_CLIENT_DEFAULTZONE}
+            - COOKIE_DOMAIN=${COOKIE_DOMAIN}
+       
+
+    note-service:
+        platform: linux/amd64
+        build:
+            context: ./note-service
+        ports:
+            - "9002:9002"
+        container_name: note-service
+        depends_on:
+            [api-gateway, service-discovery, auth-service]
+        environment:
+            - SCRIBBLE_NOTE_SERVICE_PORT=${SCRIBBLE_NOTE_SERVICE_PORT}
+            - SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=${SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
+            - SCRIBBLE_DB_ENDPOINT=${SCRIBBLE_DB_ENDPOINT}
+            - SCRIBBLE_NOTESDB_USERNAME=${SCRIBBLE_NOTESDB_USERNAME}
+            - SCRIBBLE_NOTESDB_PASSWORD=${SCRIBBLE_NOTESDB_PASSWORD}
+            - SCRIBBLE_AUTH_AWS_COGNITO_USERPOOL_ID=${SCRIBBLE_AUTH_AWS_COGNITO_USERPOOL_ID}
+            - SCRIBBLE_AUTH_AWS_COGNITO_JWK=${SCRIBBLE_AUTH_AWS_COGNITO_JWK}
+            - SCRIBBLE_AUTH_AWS_COGNITO_CLIENT_ID=${SCRIBBLE_AUTH_AWS_COGNITO_CLIENT_ID}
+            - SCRIBBLE_AUTH_AWS_COGNITO_REGION=${SCRIBBLE_AUTH_AWS_COGNITO_REGION}
+            - SCRIBBLE_AUTH_AWS_ACCESS_KEY=${SCRIBBLE_AUTH_AWS_ACCESS_KEY}
+            - SCRIBBLE_AUTH_AWS_SECRET_KEY=${SCRIBBLE_AUTH_AWS_SECRET_KEY}
+            - SCRIBBLE_AUTH_AWS_DEFAULT_REGION=${SCRIBBLE_AUTH_AWS_DEFAULT_REGION}
+            - EUREKA_SERVICE_REGISTRATION=${EUREKA_SERVICE_REGISTRATION}
+            - EUREKA_CLIENT_DEFAULTZONE=${EUREKA_CLIENT_DEFAULTZONE}
+        

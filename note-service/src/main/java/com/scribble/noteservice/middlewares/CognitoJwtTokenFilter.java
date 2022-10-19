@@ -41,7 +41,7 @@ public class CognitoJwtTokenFilter extends OncePerRequestFilter {
             ObjectMapper mapper = new ObjectMapper();
             GenericNotesResponse<Object> genericNotesResponse = new GenericNotesResponse<>(e.getMessage());
             response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(e.getMessage().equals("Expired JWT") ? HttpServletResponse.SC_UNAUTHORIZED : HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write(mapper.writeValueAsString(genericNotesResponse));
         }
 

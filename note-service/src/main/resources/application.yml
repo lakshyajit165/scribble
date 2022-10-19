@@ -16,7 +16,8 @@ spring:
 
 
     datasource:
-        url: jdbc:postgresql://${LOCAL_DOCKER_VM_IP}:5432/notesdb
+#        url: jdbc:postgresql://${LOCAL_DOCKER_VM_IP}:5432/notesdb
+        url: ${SCRIBBLE_DB_ENDPOINT}
         driverClassName: org.postgresql.Driver
         platform: postgres
         username: ${SCRIBBLE_NOTESDB_USERNAME}
@@ -54,9 +55,9 @@ logging:
                                 UserDetailsServiceAutoConfiguration: 'OFF'
 eureka:
     client:
-        register-with-eureka: true
-        fetch-registry: true
+        register-with-eureka: ${EUREKA_SERVICE_REGISTRATION}
+        fetch-registry: ${EUREKA_SERVICE_REGISTRATION}
         service-url:
-            defaultZone: http://localhost:8761/eureka/
+            defaultZone: ${EUREKA_CLIENT_DEFAULTZONE}
     instance:
-        hostname: localhost
+        prefer-ip-address: true

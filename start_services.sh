@@ -9,8 +9,9 @@
 # set env vars
 
 echo "Setting env vars..."
-chmod 777 ./set_env_vars.sh
-source ./set_env_vars.sh # sets the env variables in the current terminal session
+
+chmod 777 ./set_env_vars_local.sh
+source ./set_env_vars_local.sh # sets the env variables in the current terminal session
 
 if [ "$#" -eq 0 ]; then
     echo "Starting all services...";

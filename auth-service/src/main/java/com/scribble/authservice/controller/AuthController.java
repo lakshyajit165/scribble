@@ -21,7 +21,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import javax.validation.Valid;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +52,7 @@ public class AuthController {
     @Value(value = "${cookieDomain}")
     private String cookieDomain;
 
+    private static Cipher cipher;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/sign_up")
@@ -134,7 +140,7 @@ public class AuthController {
     }
 
     @PostMapping("/sign_in")
-    public ResponseEntity<?> signInRequest(@Valid @RequestBody UserSignInRequest userSignInRequest){
+    public ResponseEntity<?> signInRequest(@Valid @RequestBody UserSignInRequest userSignInRequest) {
 
         final Map<String, String> authParams = new HashMap<>();
         authParams.put("USERNAME", userSignInRequest.getEmail());
@@ -143,6 +149,8 @@ public class AuthController {
         final AdminInitiateAuthRequest signInRequest = new AdminInitiateAuthRequest();
         signInRequest.withAuthFlow(AuthFlowType.ADMIN_NO_SRP_AUTH).withClientId(clientId)
                 .withUserPoolId(userPoolId).withAuthParameters(authParams);
+
+
 
         try {
             AdminInitiateAuthResult signInInitiateResult = cognitoClient.adminInitiateAuth(signInRequest);
@@ -154,9 +162,14 @@ public class AuthController {
             ResponseCookie refreshTokenCookie = ResponseCookie.from(REFRESH_TOKEN, signInCompleteResult.getRefreshToken())
                     .httpOnly(true).domain(cookieDomain).path("/")
                     .build();
+            // normal cookie - required to maintain auth state(route guards) on client side
+            ResponseCookie encryptedEmailCookie = ResponseCookie.from(USER_PROFILE, encrypt(userSignInRequest.getEmail()))
+                    .domain(cookieDomain).path("/")
+                    .build();
+
             return ResponseEntity
                     .status(200)
-                    .header(HttpHeaders.SET_COOKIE, idTokenCookie.toString(), refreshTokenCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, idTokenCookie.toString(), refreshTokenCookie.toString(), encryptedEmailCookie.toString())
                     .body(new GenericAuthResponse("User signed in."));
 
         } catch (AWSCognitoIdentityProviderException e) {
@@ -253,6 +266,7 @@ public class AuthController {
             ResponseCookie idTokenCookie = ResponseCookie.from("id_token", getNewTokensResult.getIdToken())
                     .httpOnly(true).domain(cookieDomain).path("/")
                     .build();
+
             return ResponseEntity.status(200).header(HttpHeaders.SET_COOKIE, idTokenCookie.toString()).body(new GenericAuthResponse("Fetched new creds successfully!"));
         } catch (AWSCognitoIdentityProviderException e) {
             /**
@@ -365,6 +379,21 @@ public class AuthController {
         AdminDeleteUserRequest deleteUserRequest = new AdminDeleteUserRequest()
                 .withUserPoolId(userPoolId).withUsername(email);
         cognitoClient.adminDeleteUser(deleteUserRequest);
+    }
+
+    private String encrypt(String plainText)
+            throws Exception {
+        // encryption for sending email in the response cookie
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES"); // throws NoSuchAlgorithmException
+        keyGenerator.init(128); // block size is 128bits
+        SecretKey secretKey = keyGenerator.generateKey();
+        cipher = Cipher.getInstance("AES"); // throws NoSuchPaddingException
+
+        byte[] plainTextByte = plainText.getBytes();
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        byte[] encryptedByte = cipher.doFinal(plainTextByte);
+        Base64.Encoder encoder = Base64.getEncoder();
+        return encoder.encodeToString(encryptedByte);
     }
 
 }

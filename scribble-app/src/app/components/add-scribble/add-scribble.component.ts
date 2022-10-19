@@ -3,7 +3,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { NotesService } from 'src/app/services/notes/notes.service';
 import {FormBuilder, FormGroup, FormControl, AbstractControl, FormGroupDirective, NgForm, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
-import { IAddScribble } from 'src/app/model/IAddScribble';
+import { IScribble } from 'src/app/model/IScribble';
 import { SnackbarService } from 'src/app/utils/snackbar.service';
 import { IGenericAuthResponse } from 'src/app/model/IGenericAuthResponse';
 import { Router } from '@angular/router';
@@ -37,7 +37,7 @@ export class AddScribbleComponent implements OnInit {
   _matcher = new CustomErrorStateMatcher();
   addScribbleLoading: boolean = false;
 
-  addScribblePayload: IAddScribble = {
+  addScribblePayload: IScribble = {
     title: '',
     description: '',
     label: '',

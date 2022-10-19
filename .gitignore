@@ -1,4 +1,6 @@
 .DS_Store
 logs
-set_env_vars.sh
+set_env_vars_dev.sh
+set_env_vars_local.sh
 pid.file
+.env

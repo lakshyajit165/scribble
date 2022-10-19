@@ -44,7 +44,7 @@ public class NotesController {
 
     @GetMapping("/search")
     public ResponseEntity<?> getNotes(
-            @RequestParam(value = "text", required = false) String text,
+            @RequestParam(value = "searchText", required = false) String searchText,
             @RequestParam(value = "updatedOnOrAfter", required = false)
                 String updatedOnOrAfter,
             @RequestParam(value = "updatedOnOrBefore", required = false)
@@ -53,9 +53,9 @@ public class NotesController {
             @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size,
             Authentication authentication){
         try {
-            String fromDate = updatedOnOrAfter != null ? updatedOnOrAfter + "T00:00:00Z" : null;
-            String toDate = updatedOnOrBefore != null ? updatedOnOrBefore + "T23:59:59Z" : null;
-            return ResponseEntity.status(200).body(notesService.getNotes(text, fromDate, toDate, page, size, authentication));
+            String fromDate = updatedOnOrAfter != null && !updatedOnOrAfter.isBlank() ? updatedOnOrAfter + "T00:00:00Z" : null;
+            String toDate = updatedOnOrBefore != null && !updatedOnOrBefore.isBlank() ? updatedOnOrBefore + "T23:59:59Z" : null;
+            return ResponseEntity.status(200).body(notesService.getNotes(searchText, fromDate, toDate, page, size, authentication));
         } catch (BadRequestException e) {
             logger.error("Error fetching notes: " + e.getMessage());
             return ResponseEntity.status(400).body(

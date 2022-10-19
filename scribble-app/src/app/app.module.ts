@@ -25,6 +25,7 @@ import { AuthService } from './services/auth/auth.service';
 import { HttpRequestInterceptor } from './providers/http.interceptor';
 import { CookieService } from 'ngx-cookie-service';
 import { AddScribbleComponent } from './components/add-scribble/add-scribble.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { AddScribbleComponent } from './components/add-scribble/add-scribble.com
     SnackbarComponent,
     TruncatePipe,
     ForgotPasswordComponent,
-    AddScribbleComponent
+    AddScribbleComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
