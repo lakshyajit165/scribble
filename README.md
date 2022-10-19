@@ -1,0 +1,2 @@
+### Scribble Web App
+> Scribble is a sample web application designed using spring cloud design pattern which consists of Spring Cloud Gateway for reverse-proxy and request filtering, Eureka Server for service discovery along with 2 other microservices - auth and notes. The backend for the application is completed and the frontend part uses angular which is partially complete.
