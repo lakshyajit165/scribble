@@ -16,61 +16,23 @@ import { IScribbleResponseObject } from 'src/app/model/IScribbleResponseObject';
 })
 export class DashboardComponent implements OnInit {
 
-  subcription: Subscription = new Subscription();
+  debounceSubcription: Subscription = new Subscription();
   constructor(
     private _formBuilder: FormBuilder,
     private _notesService: NotesService,
     private _snackBarService: SnackbarService
   ) { 
     this.searchScribbleFormGroup = this._formBuilder.group({
-      searchText: '',
-      updatedOnOrAfter: '',
-      updatedOnOrBefore: ''
+      searchText: ''
     });
   }
   
   
   ngOnInit(): void {
+    // load scribbles on component load
     this.loadScribbles();
-
-  
-    this.loadScribblesSubscribe();
-
-
-
-    // called during search filter(s) value change
-    // this.searchScribbleFormGroup.valueChanges.pipe(
-    //     debounceTime(500),
-    //     distinctUntilChanged(),
-    //     switchMap(fields => 
-    //       this._notesService.searchNotes(
-    //         fields['searchText'],
-    //         fields['updatedOnOrAfter'],
-    //         fields['updatedOnOrBefore'],
-    //         this.page,
-    //         this.size
-    //       )
-    // )).subscribe({
-    //   next: (data: ISearchNotesResponse) => {
-    //     this.searchScribbleLoading = false;
-    //     // process data
-    //     this.scribbles = data['content'];
-    //     console.log("DEBOUNCED CALL: ", this.scribbles);
-    //   },
-    //   error: err => {
-    //     this.searchScribbleLoading = false;
-    //     this.scribbles = [];
-    //     console.log("DEBOUNCE error");
-    //     if(err.error && err.error.message) {
-    //       this._snackBarService.showSnackBar(err.error.message, 3000, 'error_outline');
-    //     }else{
-    //       this._snackBarService.showSnackBar("An error occurred. Please try again!", 3000, 'error_outline');
-    //     }
-    //   },
-    //   complete: () => {
-    //     console.log("inside complete");
-    //   }
-    // })
+    // load scribbles based on user input
+    this.loadScribblesByDebounce();
   }
   page: number = 0;
   size: number = 9;
@@ -86,22 +48,22 @@ export class DashboardComponent implements OnInit {
         this.searchScribbleLoading = false;
         // process data
         this.scribbles = data["content"];
-        console.log("DEFAULT CALL: ", this.scribbles);
       },
       error: err => {
         this.searchScribbleLoading = false;
         this.scribbles = [];
         if(err.error && err.error.message) {
-          this._snackBarService.showSnackBar(err.error.message, 3000, 'error_outline');
+          this._snackBarService.showSnackBar("Error fetching notes!", 3000, 'error_outline');
         }else{
-          this._snackBarService.showSnackBar("An error occurred. Please try again!", 3000, 'error_outline');
+          this._snackBarService.showSnackBar("Error fetching notes!", 3000, 'error_outline');
         }
       } 
     });		
   }
 
-  loadScribblesSubscribe(): void {
-    this.subcription = this.searchScribbleFormGroup.valueChanges.pipe(
+  // called when user input search text changes
+  loadScribblesByDebounce(): void {
+    this.debounceSubcription = this.searchScribbleFormGroup.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged(),
       switchMap(fields => 
@@ -117,46 +79,37 @@ export class DashboardComponent implements OnInit {
       this.searchScribbleLoading = false;
       // process data
       this.scribbles = data['content'];
-      console.log("DEBOUNCED CALL: ", this.scribbles);
     },
     error: err => {
       this.searchScribbleLoading = false;
       this.scribbles = [];
-      console.log("DEBOUNCE error");
-      this.unSubscribeSearch();
-      this.loadScribblesSubscribe();
+      // unsubscribe b4 subscribing again.
+      this.unSubscribeSearchDebounce();
+      /**
+       * 
+In an Observable Execution, zero to infinite Next notifications may be delivered.
+ If either an Error or Complete notification is delivered, then nothing else can be delivered afterwards.
+ Hence the recursive call to subscribe to value changes again is there.
+       */
+      this.loadScribblesByDebounce();
       if(err.error && err.error.message) {
         this._snackBarService.showSnackBar(err.error.message, 3000, 'error_outline');
       }else{
         this._snackBarService.showSnackBar("An error occurred. Please try again!", 3000, 'error_outline');
       }
-    },
-    complete: () => {
-      console.log("inside complete");
     }
   })
   }
 
   ngOnDestroy(): void {
-    this.unSubscribeSearch();
+    this.unSubscribeSearchDebounce();
   }
 
-  unSubscribeSearch(): void {
-    if(this.subcription){
-      this.subcription.unsubscribe();
+  unSubscribeSearchDebounce(): void {
+    if(this.debounceSubcription){
+      this.debounceSubcription.unsubscribe();
     }
   }
-  // searchScribbleResponse: Observable<ISearchNotesResponse>;
-
-  // this.searchScribbleFormGroup.valueChanges.pipe(
-  //   debounceTime(500),
-  //   switchMap(fields => this.apiService.search(
-  //     fields['term'],
-  //     fields['filter'],
-  //     fields['sort'])
-  //   )
-  // );	
   
-
   
 }
