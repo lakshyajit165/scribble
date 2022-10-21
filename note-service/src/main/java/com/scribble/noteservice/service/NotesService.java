@@ -27,6 +27,7 @@ import javax.persistence.criteria.Root;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 @Service
@@ -51,9 +52,10 @@ public class NotesService {
                 if(searchText!=null) {
                     predicates.add(
                             criteriaBuilder.or(
-                                    criteriaBuilder.like(root.get("title"), "%" + searchText + "%"),
-                                    criteriaBuilder.like(root.get("description"), "%" + searchText + "%"),
-                                    criteriaBuilder.like(root.get("label"), "%" + searchText + "%")
+                                    // comparing by converting both the received text and db text to lowercase
+                                    criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + searchText.toLowerCase() + "%"),
+                                    criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + searchText.toLowerCase() + "%"),
+                                    criteriaBuilder.like(criteriaBuilder.lower(root.get("label")), "%" + searchText.toLowerCase() + "%")
                             ));
                 }
                 if(fromDate != null)

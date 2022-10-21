@@ -1,4 +1,4 @@
 export interface ISnackBarData {
-    message: string,
-    icon: string
+    message: string;
+    icon: string;
 }

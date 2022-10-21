@@ -18,15 +18,19 @@
         <div class="row">
             <div class="col-md-4" *ngFor="let scribble of scribbles">
                 <mat-card class="example-card mt-2 mat-elevation-z0 outline">
-                    <h2>{{ scribble.title }}</h2>
+                    <mat-card-title-group>
+                        <mat-card-title>
+                            {{ scribble.title }}
+                        </mat-card-title>
+                        <mat-card-subtitle *ngIf="scribble.dueDate">Due: {{ scribble.dueDate | date }}</mat-card-subtitle>
+                        <mat-icon>remove_circle_outline</mat-icon>
+                    </mat-card-title-group>
                     <mat-card-content>
+                        
                         <p>{{ scribble.description }}</p>
 
                     </mat-card-content>
-                    <mat-card-actions>
-                        <button mat-button>LIKE</button>
-                        <button mat-button>SHARE</button>
-                    </mat-card-actions>
+                    
                 </mat-card>
             </div>
         </div>
