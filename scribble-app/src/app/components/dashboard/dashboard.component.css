@@ -31,3 +31,13 @@
 .loading-spinner {
     margin: 0 auto;
 }
+.pagination-btn {
+    margin-right: 10px;
+}
+
+.pagination-btn-wrapper {
+    display: inline-flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}

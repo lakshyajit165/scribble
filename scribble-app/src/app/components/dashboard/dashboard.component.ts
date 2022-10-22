@@ -34,27 +34,36 @@ export class DashboardComponent implements OnInit {
   
   ngOnInit(): void {
     // load scribbles on component load
-    this.loadScribbles();
+    this.loadScribbles('', '', '', this.page, this.size);
     // load scribbles based on user input
     this.loadScribblesByDebounce();
   }
   page: number = 0;
   size: number = 9;
+  lastPage: boolean = true;
+  totalElements: number = 0;
+  totalPages: number = 0;
   searchScribbleFormGroup: FormGroup;
-  searchScribbleLoading: boolean = true;
+  loading: boolean = true;
+  loadingMessage: string = "Loading Notes...";
   notes: INoteResponseObject[] = [];
 
   // called during component load
-  loadScribbles(): void {
-    this._notesService.searchNotes('', '', '', this.page, this.size)
+  loadScribbles(searchText: string, updatedOnOrBefore: string, updatedOnOrAfter: string, page: number, size: number): void {
+    this._notesService.searchNotes(searchText, updatedOnOrBefore, updatedOnOrAfter, page, size)
     .subscribe({
       next: (data: ISearchNotesResponse) => {
-        this.searchScribbleLoading = false;
+        this.loading = false;
         // process data
         this.notes = data["content"];
+        this.page = data["page"];
+        this.size = data["size"];
+        this.totalElements = data["totalElements"];
+        this.totalPages = data["totalPages"];
+        this.lastPage = data["last"];
       },
       error: err => {
-        this.searchScribbleLoading = false;
+        this.loading = false;
         this.notes = [];
         if(err.error && err.error.message) {
           this._snackBarService.showSnackBar("Error fetching notes!", 3000, 'error_outline');
@@ -67,7 +76,7 @@ export class DashboardComponent implements OnInit {
 
   // called when user input search text changes
   loadScribblesByDebounce(): void {
-    this.searchScribbleLoading = true;
+    this.loading = true;
     this.debounceSubcription = this.searchScribbleFormGroup.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged(),
@@ -81,12 +90,17 @@ export class DashboardComponent implements OnInit {
         )
   )).subscribe({
     next: (data: ISearchNotesResponse) => {
-      this.searchScribbleLoading = false;
+      this.loading = false;
       // process data
       this.notes = data['content'];
+      this.page = data["page"];
+      this.size = data["size"];
+      this.totalElements = data["totalElements"];
+      this.totalPages = data["totalPages"];
+      this.lastPage = data["last"];
     },
     error: err => {
-      this.searchScribbleLoading = false;
+      this.loading = false;
       this.notes = [];
       // unsubscribe b4 subscribing again.
       this.unSubscribeSearchDebounce();
@@ -129,8 +143,37 @@ In an Observable Execution, zero to infinite Next notifications may be delivered
     console.log(noteId);
   }
 
-  goToPage(route: string): void {
+  goToRoute(route: string): void {
     this._router.navigate([route]);
   }
-  
+
+  previousPage(): void {
+    if(this.page === 0){
+      this._snackBarService.showSnackBar("This is the first page!", 3000, 'error_outline');
+      return;
+    }
+    this.page = this.page - 1;
+    this.loadScribbles(
+      this.searchScribbleFormGroup.get('searchText')?.value, 
+      this.searchScribbleFormGroup.get('fromDate')?.value, 
+      this.searchScribbleFormGroup.get('toDate')?.value, 
+      this.page,
+      this.size
+    )
+  }
+
+  nextPage(): void {
+    if(this.page === this.totalPages - 1 && this.lastPage){
+      this._snackBarService.showSnackBar("This is the last page!", 3000, 'error_outline');
+      return;
+    }
+    this.page = this.page + 1;
+    this.loadScribbles(
+      this.searchScribbleFormGroup.get('searchText')?.value, 
+      this.searchScribbleFormGroup.get('fromDate')?.value, 
+      this.searchScribbleFormGroup.get('toDate')?.value, 
+      this.page,
+      this.size
+    )
+  }
 }
