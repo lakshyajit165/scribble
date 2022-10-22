@@ -1,4 +1,4 @@
-export interface IScribbleResponseObject {
+export interface INoteResponseObject {
     author: string;
     createdAt: string;
     description: string;

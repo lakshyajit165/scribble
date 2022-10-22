@@ -1,7 +1,7 @@
-import { IScribbleResponseObject } from "./IScribbleResponseObject";
+import { INoteResponseObject } from "./INoteResponseObject";
 
 export interface ISearchNotesResponse {
-    content: IScribbleResponseObject[];
+    content: INoteResponseObject[];
     message: string;
     page: number;
     size: number;

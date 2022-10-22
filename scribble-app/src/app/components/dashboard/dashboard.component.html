@@ -1,36 +1,46 @@
 <section class="container">
     <div class="col-lg-8 mx-auto dashboard-section">
-        <h1 class="dashboard-header">
-            <span class="mt-1">
-                <mat-icon> list_alt</mat-icon>
-            </span>
-            <span>
-                My Scribbles
-            </span>
-        </h1>
+        <div class="dashboard-header">
+            <h1>My Notes</h1>
+            <button mat-button color="primary" class="add-note-btn" (click)="goToPage('home/scribbles/add')">Add Note</button>
+        </div>
         <form [formGroup]="searchScribbleFormGroup">
             <mat-form-field appearance="outline" class="form-field-width">
-                <mat-label>Search Scribbles</mat-label>
+                <mat-label>Search Notes</mat-label>
                 <input matInput formControlName="searchText" placeholder="Search your scribbles..">
                 <mat-icon matSuffix>search</mat-icon>
             </mat-form-field>
         </form>
         <div class="row">
-            <div class="col-md-4" *ngFor="let scribble of scribbles">
+            <div *ngIf="searchScribbleLoading" class="col-lg-12 text-center mx-auto">
+                <mat-spinner [diameter]="40" class="loading-spinner"></mat-spinner>
+                <span>Loading notes...</span>
+            </div>
+            <div class="col-md-4" *ngFor="let note of notes">
                 <mat-card class="example-card mt-2 mat-elevation-z0 outline">
                     <mat-card-title-group>
                         <mat-card-title>
-                            {{ scribble.title }}
+                            {{ note.title }}
                         </mat-card-title>
-                        <mat-card-subtitle *ngIf="scribble.dueDate">Due: {{ scribble.dueDate | date }}</mat-card-subtitle>
-                        <mat-icon>remove_circle_outline</mat-icon>
+                        <mat-card-subtitle *ngIf="note.dueDate">Due: {{ note.dueDate | date }}</mat-card-subtitle>
+                        <mat-icon [matMenuTriggerFor]="editAndDeleteMenu" aria-label="Example icon-button with a menu">more_vert</mat-icon>
+                        <mat-menu #editAndDeleteMenu="matMenu" xPosition="before">
+                            <ng-template matMenuContent>
+                                <button mat-menu-item (click)="editNote(note.id)">
+                                    <span>Edit Note</span>
+                                </button>
+                                <button mat-menu-item (click)="deleteNote(note.id)">
+                                    <span>Delete Note</span>
+                                </button>
+                            </ng-template>
+                        </mat-menu>
                     </mat-card-title-group>
                     <mat-card-content>
                         
-                        <p>{{ scribble.description }}</p>
+                        <p>{{ note.description }}</p>
 
                     </mat-card-content>
-                    
+                    <p class="last-updated-text"> Last updated: {{ note.updatedAt | date}} </p>
                 </mat-card>
             </div>
         </div>

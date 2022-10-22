@@ -5,7 +5,9 @@
   >
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item><span class="nav-list-icon"><mat-icon>home</mat-icon></span>Home</a>
+      <a mat-list-item (click)="goToComponnent('home/dashboard')"><span class="nav-list-icon">
+          <mat-icon>home</mat-icon>
+        </span>Home</a>
      
       <a mat-list-item (click)="goToComponnent('home/scribbles/add')"><span class="nav-list-icon">
           <mat-icon>note_add</mat-icon>

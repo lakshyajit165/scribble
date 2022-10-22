@@ -1,9 +1,6 @@
 <section class="container">
-    <div class="col-lg-7 mx-auto add-scribble-section">
+    <div class="col-lg-6 mx-auto add-scribble-section">
         <h1 class="add-scribble-header">
-            <span class="mt-1">
-                <mat-icon>add_circle_outline</mat-icon>
-            </span>
             <span>
                 Add Scribble
             </span>
@@ -14,7 +11,7 @@
                     <mat-label>Scribble Title</mat-label>
                     <input matInput formControlName="title" placeholder="Scribble Title">
                 </mat-form-field>
-                <mat-form-field class="form-field-width" appearance="fill">
+                <mat-form-field class="form-field-width" appearance="outline">
                     <mat-label>Scribble description</mat-label>
                     <textarea matInput rows="5" formControlName="description" placeholder="Add description"
                         [errorStateMatcher]="_matcher"></textarea>
@@ -40,7 +37,7 @@
 
             </div>
             <button mat-raised-button color="primary" (click)="addScribble()">
-                <span *ngIf="!addScribbleLoading;else show_spinner">Add Scribble</span>
+                <span *ngIf="!addScribbleLoading;else show_spinner">Add </span>
                 <ng-template #show_spinner>
                     <span>
                         Adding..

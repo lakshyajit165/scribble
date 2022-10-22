@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable, map } from 'rxjs';
-import { IScribble } from 'src/app/model/IScribble';
+import { INote } from 'src/app/model/INote';
 import { IGenericNotesResponse } from 'src/app/model/IGenericNotesResponse';
 import { ISearchNotesResponse } from 'src/app/model/ISearchNotesResponse';
 
@@ -32,13 +32,13 @@ export class NotesService {
     );
   }
 
-  createNote(addScribblePayload: IScribble): Observable<IGenericNotesResponse<Object>> {
+  createNote(addScribblePayload: INote): Observable<IGenericNotesResponse<Object>> {
     return this._http.post<IGenericNotesResponse<Object>>(this.apiGateWay + "note-service/api/v1/notes/create_note", addScribblePayload).pipe(
       map((response: IGenericNotesResponse<Object>) => response as IGenericNotesResponse<Object>)
     );
   }
 
-  updateNote(addScribblePayload: IScribble, noteId: string): Observable<IGenericNotesResponse<Object>> {
+  updateNote(addScribblePayload: INote, noteId: string): Observable<IGenericNotesResponse<Object>> {
     return this._http.patch<IGenericNotesResponse<Object>>(this.apiGateWay + `note-service/api/v1/notes/update_note/${noteId}`, addScribblePayload).pipe(
       map((response: IGenericNotesResponse<Object>) => response as IGenericNotesResponse<Object>)
     );

@@ -4,11 +4,14 @@
 
 .dashboard-header {
     display: inline-flex;
-    align-items: flex-start;
-    justify-content: space-around;
-    margin-bottom: 20px;
+    justify-content: flex-start;
+        width: 100%;
 }
 
+.add-note-btn {
+    margin-left: auto;
+    margin-bottom: 10px;
+}
 .form-field-width {
     width: 100%;
 }
@@ -20,4 +23,11 @@
 }
 .mat-card-title {
     font-size: 18px;
+}
+.last-updated-text {
+    color: grey;
+}
+
+.loading-spinner {
+    margin: 0 auto;
 }
