@@ -63,10 +63,10 @@ export class AuthService {
    this._http.get(this.apiGateWay + "auth-service/api/v1/auth/get_new_creds").subscribe();
   }
 
-  logout(): void {
-    this._http.post(this.apiGateWay + "auth-service/api/v1/auth/logout", {}).subscribe();
-    this._cookieService.delete('user_profile');
-    this._router.navigate(['/login']);
+  logout(): Observable<IGenericAuthResponse> {
+    return this._http.post(this.apiGateWay + "auth-service/api/v1/auth/logout", {}).pipe(
+      map(response => response as IGenericAuthResponse)
+    );
   }
 
 

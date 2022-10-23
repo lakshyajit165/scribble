@@ -34,7 +34,6 @@ export class HttpRequestInterceptor implements HttpInterceptor {
           this.refresh = true;
           return this._http.get('http://localhost:9000/auth-service/api/v1/auth/get_new_creds', {withCredentials: true}).pipe(
             switchMap((res: any) => {
-      
               return next.handle(request.clone({
                 withCredentials: true
               }));

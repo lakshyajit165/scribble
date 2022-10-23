@@ -6,6 +6,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { NotesService } from 'src/app/services/notes/notes.service';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { IGenericAuthResponse } from 'src/app/model/IGenericAuthResponse';
+import { SnackbarService } from 'src/app/utils/snackbar.service';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +25,9 @@ export class HomeComponent {
   constructor(
     private breakpointObserver: BreakpointObserver,
     private _router: Router,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _cookieService: CookieService,
+    private _snackBarService: SnackbarService
   ) {
    
   }
@@ -33,6 +37,15 @@ export class HomeComponent {
   }
 
   logout(): void {
-    this._authService.logout();
+    this._authService.logout().subscribe({
+      next: (data: IGenericAuthResponse) => {
+        this._cookieService.delete("user_profile", "/");
+        this._snackBarService.showSnackBar("User logged out!", 3000, 'check_circle_outline');
+        this._router.navigate(['/login']);
+      },
+      error: err => {
+        this._snackBarService.showSnackBar("Error logging out user", 3000, 'error_outline');
+      }
+    })
   }
 }
