@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { IConfirmPassword } from 'src/app/model/IConfirmPassword';
-import { IGenericAuthResponse } from 'src/app/model/IGenericAuthResponse';
+import { IGenericResponse } from 'src/app/model/IGenericResponse';
 import { ILogin } from 'src/app/model/ILogin';
 import { ISignUpAndForgotPassword } from 'src/app/model/ISignUpAndForgotPassword';
 import { map } from "rxjs/operators";
@@ -29,33 +29,33 @@ export class AuthService {
   }
   
   
-  signUp(signUpPayload: ISignUpAndForgotPassword): Observable<IGenericAuthResponse> {
-    return this._http.post<IGenericAuthResponse>(this.apiGateWay + "auth-service/api/v1/auth/sign_up", signUpPayload).pipe(
-      map(response => response as IGenericAuthResponse)
+  signUp(signUpPayload: ISignUpAndForgotPassword): Observable<IGenericResponse> {
+    return this._http.post<IGenericResponse>(this.apiGateWay + "auth-service/api/v1/auth/sign_up", signUpPayload).pipe(
+      map(response => response as IGenericResponse)
     );
   }
 
-  confirmPassword(confirmPasswordPayload: IConfirmPassword): Observable<IGenericAuthResponse> {
+  confirmPassword(confirmPasswordPayload: IConfirmPassword): Observable<IGenericResponse> {
     return this._http.post(this.apiGateWay + "auth-service/api/v1/auth/confirm_password", confirmPasswordPayload).pipe(
-      map(response => response as IGenericAuthResponse)
+      map(response => response as IGenericResponse)
     );
   }
 
-  login(loginPayload: ILogin): Observable<IGenericAuthResponse> {
+  login(loginPayload: ILogin): Observable<IGenericResponse> {
     return this._http.post(this.apiGateWay + "auth-service/api/v1/auth/sign_in", loginPayload).pipe(
-      map(response => response as IGenericAuthResponse)
+      map(response => response as IGenericResponse)
     );
   }
 
-  forgotPassword(forgotPasswordPayload: ISignUpAndForgotPassword): Observable<IGenericAuthResponse> {
+  forgotPassword(forgotPasswordPayload: ISignUpAndForgotPassword): Observable<IGenericResponse> {
     return this._http.post(this.apiGateWay + "auth-service/api/v1/auth/forgot_password", forgotPasswordPayload).pipe(
-      map(response => response as IGenericAuthResponse)
+      map(response => response as IGenericResponse)
     );
   }
 
-  confirmForgotPassword(confirmForgotPasswordPayload: IConfirmPassword): Observable<IGenericAuthResponse> {
+  confirmForgotPassword(confirmForgotPasswordPayload: IConfirmPassword): Observable<IGenericResponse> {
     return this._http.post(this.apiGateWay + "auth-service/api/v1/auth/confirm_forgot_password", confirmForgotPasswordPayload).pipe(
-      map(response => response as IGenericAuthResponse)
+      map(response => response as IGenericResponse)
     );
   }
 
@@ -63,9 +63,9 @@ export class AuthService {
    this._http.get(this.apiGateWay + "auth-service/api/v1/auth/get_new_creds").subscribe();
   }
 
-  logout(): Observable<IGenericAuthResponse> {
+  logout(): Observable<IGenericResponse> {
     return this._http.post(this.apiGateWay + "auth-service/api/v1/auth/logout", {}).pipe(
-      map(response => response as IGenericAuthResponse)
+      map(response => response as IGenericResponse)
     );
   }
 

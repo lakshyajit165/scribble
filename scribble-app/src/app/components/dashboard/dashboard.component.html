@@ -1,12 +1,12 @@
 <section class="container">
     <div class="col-lg-8 mx-auto dashboard-section">
         <div class="dashboard-header">
-            <h1>My Notes</h1>
-            <button mat-button color="primary" class="add-note-btn" (click)="goToRoute('home/scribbles/add')">Add Note</button>
+            <h1>My Scribbles</h1>
+            <button mat-button color="primary" class="add-note-btn" (click)="goToRoute('home/scribbles/add')">Add Scribble</button>
         </div>
         <form [formGroup]="searchScribbleFormGroup">
             <mat-form-field appearance="outline" class="form-field-width">
-                <mat-label>Search Notes</mat-label>
+                <mat-label>Search Scribbles</mat-label>
                 <input matInput formControlName="searchText" placeholder="Search your scribbles..">
                 <mat-icon matSuffix>search</mat-icon>
             </mat-form-field>

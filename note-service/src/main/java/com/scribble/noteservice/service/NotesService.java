@@ -28,6 +28,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 
 @Service
@@ -103,7 +104,7 @@ public class NotesService {
         if(!notesRepository.existsById(noteId))
             throw new ResourceNotFoundException("Note", "id", noteId);
 
-        Note note = notesRepository.getReferenceById(noteId); // already checked if note exists in if
+        Note note = notesRepository.findById(noteId).get();// already checked if note exists in if
         // check if the user trying to update the note, actually created the note
         if(!authentication.getName().equals(note.getAuthor())){
             throw new AccessDeniedException("Write", "Note");

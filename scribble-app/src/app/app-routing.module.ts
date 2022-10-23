@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AddScribbleComponent } from './components/add-scribble/add-scribble.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { EditScribbleComponent } from './components/edit-scribble/edit-scribble.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
@@ -25,6 +26,9 @@ const routes: Routes = [
       {
         path: 'scribbles/add', component: AddScribbleComponent, canActivateChild: [AuthGuard]
       },
+      {
+        path: 'scribbles/edit/:id', component: EditScribbleComponent, canActivateChild: [AuthGuard]
+      }
     ]
   },
   {

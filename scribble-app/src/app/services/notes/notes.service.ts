@@ -6,6 +6,8 @@ import { Observable, map } from 'rxjs';
 import { INote } from 'src/app/model/INote';
 import { IGenericNotesResponse } from 'src/app/model/IGenericNotesResponse';
 import { ISearchNotesResponse } from 'src/app/model/ISearchNotesResponse';
+import { INoteResponseObject } from 'src/app/model/INoteResponseObject';
+import { IGenericResponse } from 'src/app/model/IGenericResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -26,27 +28,27 @@ export class NotesService {
     );
   }
 
-  getNoteById(noteId: string): Observable<IGenericNotesResponse<Object>> {
-    return this._http.get<IGenericNotesResponse<Object>>(this.apiGateWay + `note-service/api/v1/notes/get_note/${noteId}`).pipe(
-      map((response: IGenericNotesResponse<Object>) => response as IGenericNotesResponse<Object>)
+  getNoteById(noteId: string): Observable<IGenericNotesResponse<INoteResponseObject>> {
+    return this._http.get<IGenericNotesResponse<INoteResponseObject>>(this.apiGateWay + `note-service/api/v1/notes/get_note/${noteId}`).pipe(
+      map((response: IGenericNotesResponse<INoteResponseObject>) => response as IGenericNotesResponse<INoteResponseObject>)
     );
   }
 
-  createNote(addScribblePayload: INote): Observable<IGenericNotesResponse<Object>> {
-    return this._http.post<IGenericNotesResponse<Object>>(this.apiGateWay + "note-service/api/v1/notes/create_note", addScribblePayload).pipe(
-      map((response: IGenericNotesResponse<Object>) => response as IGenericNotesResponse<Object>)
+  createNote(addScribblePayload: INote): Observable<IGenericNotesResponse<INoteResponseObject>> {
+    return this._http.post<IGenericNotesResponse<INoteResponseObject>>(this.apiGateWay + "note-service/api/v1/notes/create_note", addScribblePayload).pipe(
+      map((response: IGenericNotesResponse<INoteResponseObject>) => response as IGenericNotesResponse<INoteResponseObject>)
     );
   }
 
-  updateNote(addScribblePayload: INote, noteId: string): Observable<IGenericNotesResponse<Object>> {
-    return this._http.patch<IGenericNotesResponse<Object>>(this.apiGateWay + `note-service/api/v1/notes/update_note/${noteId}`, addScribblePayload).pipe(
-      map((response: IGenericNotesResponse<Object>) => response as IGenericNotesResponse<Object>)
+  updateNote(addScribblePayload: INote, noteId: number): Observable<IGenericNotesResponse<INoteResponseObject>> {
+    return this._http.patch<IGenericNotesResponse<INoteResponseObject>>(this.apiGateWay + `note-service/api/v1/notes/update_note/${noteId}`, addScribblePayload).pipe(
+      map((response: IGenericNotesResponse<INoteResponseObject>) => response as IGenericNotesResponse<INoteResponseObject>)
     );
   }
 
-  deleteNote(noteId: string): Observable<IGenericNotesResponse<Object>> {
-    return this._http.delete<IGenericNotesResponse<Object>>(this.apiGateWay + `note-service/api/v1/notes/delete_note/${noteId}`).pipe(
-      map((response: IGenericNotesResponse<Object>) => response as IGenericNotesResponse<Object>)
+  deleteNote(noteId: number): Observable<IGenericResponse> {
+    return this._http.delete<IGenericResponse>(this.apiGateWay + `note-service/api/v1/notes/delete_note/${noteId}`).pipe(
+      map((response: IGenericResponse) => response as IGenericResponse)
     );
   }
 }

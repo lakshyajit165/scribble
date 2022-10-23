@@ -1,0 +1,24 @@
+.edit-scribble-section {
+    margin-top: 40px;
+}
+
+.edit-scribble-header {
+    display: inline-flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.form-field-width {
+    width: 100%;
+}
+
+.scribble-loading-wrapper {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.scribble-loading-text {
+    margin-left: 5px;
+}

@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup, FormControl, AbstractControl, FormGroupDirective
 import {ErrorStateMatcher} from '@angular/material/core';
 import { MatStepper } from '@angular/material/stepper';
 import { IConfirmPassword } from 'src/app/model/IConfirmPassword';
-import { IGenericAuthResponse } from 'src/app/model/IGenericAuthResponse';
+import { IGenericResponse } from 'src/app/model/IGenericResponse';
 import { ISignUpAndForgotPassword } from 'src/app/model/ISignUpAndForgotPassword';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { SnackbarService } from 'src/app/utils/snackbar.service';
@@ -62,7 +62,7 @@ export class SignupComponent implements OnInit {
     if(this.emailFormGroup.valid){
       this.signUpAndForgotPasswordPayload.email = this.emailFormGroup.get('email')?.value ?? '';
       this._authService.signUp(this.signUpAndForgotPasswordPayload).subscribe({
-        next: (data: IGenericAuthResponse) => {
+        next: (data: IGenericResponse) => {
           this.signUpAndForgotPasswordLoading = false;
           this._snackBarService.showSnackBar(data.message, 3000, 'check_circle_outline');
           stepper.next();
@@ -91,7 +91,7 @@ export class SignupComponent implements OnInit {
       this.confirmPasswordPayload.password = this.confirmPasswordFormGroup.get('password')?.value ?? '';
       this.confirmPasswordPayload.verification_code = this.confirmPasswordFormGroup.get('verificationCode')?.value ?? '';
       this._authService.confirmPassword(this.confirmPasswordPayload).subscribe({
-        next: (data: IGenericAuthResponse) => {
+        next: (data: IGenericResponse) => {
           this.signUpAndForgotPasswordLoading = false;
           this._snackBarService.showSnackBar(data.message || 'SignUp succesful!', 3000, 'check_circle_outline');
           // automatically login user here.

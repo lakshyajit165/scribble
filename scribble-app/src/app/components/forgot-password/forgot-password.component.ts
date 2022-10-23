@@ -4,7 +4,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { IConfirmPassword } from 'src/app/model/IConfirmPassword';
-import { IGenericAuthResponse } from 'src/app/model/IGenericAuthResponse';
+import { IGenericResponse } from 'src/app/model/IGenericResponse';
 import { ISignUpAndForgotPassword } from 'src/app/model/ISignUpAndForgotPassword';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { SnackbarService } from 'src/app/utils/snackbar.service';
@@ -62,7 +62,7 @@ export class ForgotPasswordComponent implements OnInit {
     if(this.emailFormGroup.valid){
       this.signUpAndForgotPasswordPayload.email = this.emailFormGroup.get('email')?.value ?? '';
       this._authService.forgotPassword(this.signUpAndForgotPasswordPayload).subscribe({
-        next: (data: IGenericAuthResponse) => {
+        next: (data: IGenericResponse) => {
           this.signUpAndForgotPasswordLoading = false;
           this._snackBarService.showSnackBar(data.message, 3000, 'check_circle_outline');
           stepper.next();
@@ -91,7 +91,7 @@ export class ForgotPasswordComponent implements OnInit {
       this.confirmForgotPasswordPayload.password = this.confirmForgotPasswordFormGroup.get('password')?.value ?? '';
       this.confirmForgotPasswordPayload.verification_code = this.confirmForgotPasswordFormGroup.get('verificationCode')?.value ?? '';
       this._authService.confirmForgotPassword(this.confirmForgotPasswordPayload).subscribe({
-        next: (data: IGenericAuthResponse) => {
+        next: (data: IGenericResponse) => {
           this.signUpAndForgotPasswordLoading = false;
           this._snackBarService.showSnackBar(data.message || 'Password reset successful!', 3000, 'check_circle_outline');
           this._router.navigate(['/login']);

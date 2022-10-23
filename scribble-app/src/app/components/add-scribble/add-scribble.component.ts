@@ -5,8 +5,9 @@ import {FormBuilder, FormGroup, FormControl, AbstractControl, FormGroupDirective
 import {ErrorStateMatcher} from '@angular/material/core';
 import { INote } from 'src/app/model/INote';
 import { SnackbarService } from 'src/app/utils/snackbar.service';
-import { IGenericAuthResponse } from 'src/app/model/IGenericAuthResponse';
+import { IGenericResponse } from 'src/app/model/IGenericResponse';
 import { Router } from '@angular/router';
+import { IGenericNotesResponse } from 'src/app/model/IGenericNotesResponse';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
@@ -60,7 +61,7 @@ export class AddScribbleComponent implements OnInit {
       this.addScribblePayload.label = this.addScribbleFormGroup.get('label')?.value ?? '';
       this.addScribblePayload.dueDate = this.addScribbleFormGroup.get('dueDate')?.value ?? '';
       this._notesService.createNote(this.addScribblePayload).subscribe({
-        next: (data: IGenericAuthResponse) => {
+        next: (data: IGenericNotesResponse<Object>) => {
           this.addScribbleLoading = false;
           this._snackBarService.showSnackBar("Scribble added!", 3000, 'check_circle_outline');
           this._router.navigate(['/home']);

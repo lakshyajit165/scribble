@@ -9,6 +9,7 @@ import { ISearchNotesResponse } from 'src/app/model/ISearchNotesResponse';
 import { SnackbarService } from 'src/app/utils/snackbar.service';
 import { INoteResponseObject } from 'src/app/model/INoteResponseObject';
 import { Router } from '@angular/router';
+import { IGenericResponse } from 'src/app/model/IGenericResponse';
 
 @Component({
   selector: 'app-dashboard',
@@ -131,16 +132,25 @@ In an Observable Execution, zero to infinite Next notifications may be delivered
   }
 
   editNote(noteId: number): void {
-    console.log("edit note: " + noteId);
+    this._router.navigate([`/home/scribbles/edit/${noteId}`]);
   }
 
   deleteNote(noteId: number): void {
-    console.log("delete note: " + noteId);
-  }
-
-  
-  test(noteId: number): void {
-    console.log(noteId);
+    this._notesService.deleteNote(noteId).subscribe({
+      next: (data: IGenericResponse) => {
+        this.loadScribbles(
+          this.searchScribbleFormGroup.get('searchText')?.value, 
+          this.searchScribbleFormGroup.get('toDate')?.value, 
+          this.searchScribbleFormGroup.get('fromDate')?.value, 
+          this.page,
+          this.size
+        )
+        this._snackBarService.showSnackBar(data.message || 'Scribble deleted!', 3000, 'check_circle_outline');
+      },
+      error: err => {
+        this._snackBarService.showSnackBar(err.error && err.error.message ? err.error.message : 'Error deleting scribble!', 3000, 'error_outline');
+      }
+    })
   }
 
   goToRoute(route: string): void {
@@ -155,8 +165,8 @@ In an Observable Execution, zero to infinite Next notifications may be delivered
     this.page = this.page - 1;
     this.loadScribbles(
       this.searchScribbleFormGroup.get('searchText')?.value, 
-      this.searchScribbleFormGroup.get('fromDate')?.value, 
       this.searchScribbleFormGroup.get('toDate')?.value, 
+      this.searchScribbleFormGroup.get('fromDate')?.value, 
       this.page,
       this.size
     )

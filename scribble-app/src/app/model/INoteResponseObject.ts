@@ -6,4 +6,5 @@ export interface INoteResponseObject {
     title: string;
     updatedAt: string;
     dueDate: string;
+    label: string;
 }

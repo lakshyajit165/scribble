@@ -7,7 +7,7 @@ import {
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { IGenericAuthResponse } from 'src/app/model/IGenericAuthResponse';
+import { IGenericResponse } from 'src/app/model/IGenericResponse';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { SnackbarService } from 'src/app/utils/snackbar.service';
 import { ILogin } from '../../model/ILogin';
@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
       this.userLoginPayload.email = this.loginFormGroup.get('email')?.value ?? '';
       this.userLoginPayload.password = this.loginFormGroup.get('password')?.value ?? '';
       this._authService.login(this.userLoginPayload).subscribe({
-        next: (data: IGenericAuthResponse) => {
+        next: (data: IGenericResponse) => {
           this.loginUserLoading = false;
           this._router.navigate(['/home']);
         },
