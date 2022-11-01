@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, FormControl, AbstractControl, FormGroupDirective, NgForm, Validators} from '@angular/forms';
 import { INote } from 'src/app/model/INote';
 import { of, Subscription, throwError } from 'rxjs';
@@ -10,6 +10,14 @@ import { SnackbarService } from 'src/app/utils/snackbar.service';
 import { INoteResponseObject } from 'src/app/model/INoteResponseObject';
 import { Router } from '@angular/router';
 import { IGenericResponse } from 'src/app/model/IGenericResponse';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import * as _moment from 'moment';
+const moment = _moment; 
+
+export interface DialogData {
+  fromDate: string;
+  toDate: string;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -24,11 +32,10 @@ export class DashboardComponent implements OnInit {
     private _notesService: NotesService,
     private _snackBarService: SnackbarService,
     private _router: Router,
+    public dialog: MatDialog
   ) { 
     this.searchScribbleFormGroup = this._formBuilder.group({
-      searchText: '',
-      fromDate: '',
-      toDate: ''
+      searchText: ''
     });
   }
   
@@ -48,10 +55,12 @@ export class DashboardComponent implements OnInit {
   loading: boolean = true;
   loadingMessage: string = "Loading Notes...";
   notes: INoteResponseObject[] = [];
+  selectedFromDate: string = "";
+  selectedToDate: string = "";
 
   // called during component load
-  loadScribbles(searchText: string, updatedOnOrBefore: string, updatedOnOrAfter: string, page: number, size: number): void {
-    this._notesService.searchNotes(searchText, updatedOnOrBefore, updatedOnOrAfter, page, size)
+  loadScribbles(searchText: string, fromDate: string, toDate: string, page: number, size: number): void {
+    this._notesService.searchNotes(searchText, fromDate, toDate, page, size)
     .subscribe({
       next: (data: ISearchNotesResponse) => {
         this.loading = false;
@@ -140,8 +149,8 @@ In an Observable Execution, zero to infinite Next notifications may be delivered
       next: (data: IGenericResponse) => {
         this.loadScribbles(
           this.searchScribbleFormGroup.get('searchText')?.value, 
-          this.searchScribbleFormGroup.get('toDate')?.value, 
-          this.searchScribbleFormGroup.get('fromDate')?.value, 
+          this.selectedFromDate ? moment(this.selectedFromDate).format("YYYY-MM-DD").toString() : "", 
+          this.selectedToDate ? moment(this.selectedToDate).format("YYYY-MM-DD").toString() : "", 
           this.page,
           this.size
         )
@@ -164,9 +173,9 @@ In an Observable Execution, zero to infinite Next notifications may be delivered
     }
     this.page = this.page - 1;
     this.loadScribbles(
-      this.searchScribbleFormGroup.get('searchText')?.value, 
-      this.searchScribbleFormGroup.get('toDate')?.value, 
-      this.searchScribbleFormGroup.get('fromDate')?.value, 
+      this.searchScribbleFormGroup.get('searchText')?.value,
+      this.selectedFromDate ? moment(this.selectedFromDate).format("YYYY-MM-DD").toString() : "", 
+      this.selectedToDate ? moment(this.selectedToDate).format("YYYY-MM-DD").toString() : "", 
       this.page,
       this.size
     )
@@ -180,10 +189,90 @@ In an Observable Execution, zero to infinite Next notifications may be delivered
     this.page = this.page + 1;
     this.loadScribbles(
       this.searchScribbleFormGroup.get('searchText')?.value, 
-      this.searchScribbleFormGroup.get('fromDate')?.value, 
-      this.searchScribbleFormGroup.get('toDate')?.value, 
+      this.selectedFromDate ? moment(this.selectedFromDate).format("YYYY-MM-DD").toString() : "", 
+      this.selectedToDate ? moment(this.selectedToDate).format("YYYY-MM-DD").toString() : "", 
       this.page,
       this.size
     )
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '400px',
+      data: {fromDate: this.selectedFromDate, toDate: this.selectedToDate},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      /**
+       * Note: Angular material date picker picks just previous day's date
+       * due to local timezone difference. Hence handled acc. to - 
+       * https://stackoverflow.com/questions/66102300/angular-material-datepicker-shows-one-day-behind-in-angular-9-when-i-click-searc
+       * 
+      */
+      if(result) {
+        this.selectedFromDate = result.fromDate;
+        const fromDatePicked = result.fromDate;
+        this.selectedToDate = result.toDate;
+        const toDatePicked = result.toDate;
+        const formattedFromDate = fromDatePicked ? moment(fromDatePicked).format("YYYY-MM-DD").toString() : "";
+        const formattedToDate = toDatePicked ? moment(toDatePicked).format("YYYY-MM-DD").toString() : "";
+      
+
+        this.loadScribbles(
+          this.searchScribbleFormGroup.get('searchText')?.value,
+          formattedFromDate,
+          formattedToDate,
+          this.page,
+          this.size
+        )
+        }
+      
+    });
+  }
+
+  getNumberOfFiltersApplied(): number {
+    if(this.selectedFromDate && this.selectedToDate)
+      return 2;
+    else if(this.selectedFromDate || this.selectedToDate){
+      return 1;
+    }else{ 
+      return 0;
+    }
+  }
+
+  getFormattedDate(datePicked: Date): string {
+    if(/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/.test(datePicked.toString()))
+      return datePicked.toString();
+    return datePicked && 
+        new Date(
+          datePicked.getFullYear(), 
+          datePicked.getMonth(), 
+          datePicked.getDate(), 
+          datePicked.getHours(), 
+          datePicked.getMinutes() - datePicked.getTimezoneOffset())
+          .toISOString().split('T')[0] ? 
+                new Date(datePicked.getFullYear(), 
+                        datePicked.getMonth(), 
+                        datePicked.getDate(), 
+                        datePicked.getHours(), 
+                        datePicked.getMinutes() - datePicked.getTimezoneOffset())
+                        .toISOString().split('T')[0] : '';
+  }
+
+
+}
+
+@Component({
+  selector: 'dialog-overview-example-dialog',
+  templateUrl: 'dialog-overview-example-dialog.html',
+})
+export class DialogOverviewExampleDialog {
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+  ) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 }

@@ -2,10 +2,26 @@
     <div class="col-lg-8 mx-auto dashboard-section">
         <div class="dashboard-header">
             <h1>My Scribbles</h1>
-            <button mat-button color="primary" class="add-note-btn" (click)="goToRoute('home/scribbles/add')">Add Scribble</button>
+            <button mat-button class="add-note-btn" (click)="goToRoute('home/scribbles/add')">
+                <mat-icon>playlist_add</mat-icon><span>Add</span>
+            </button>
+            <div class="dashboard-header-btns">
+                <button *ngIf="getNumberOfFiltersApplied() !== 0;else noFilterBlock" mat-button
+                    [matBadge]="getNumberOfFiltersApplied()" matBadgePosition="after" matBadgeColor="accent" (click)="openDialog()">
+                    <mat-icon>tune</mat-icon>
+                    <span>Filter</span>
+                </button>
+                <ng-template #noFilterBlock>
+                    <button mat-button matBadgePosition="after" matBadgeColor="accent" (click)="openDialog()">
+                        <mat-icon>tune</mat-icon>
+                        <span>Filter</span>
+                    </button>
+                </ng-template>
+            
+            </div>
         </div>
-        <form [formGroup]="searchScribbleFormGroup">
-            <mat-form-field appearance="outline" class="form-field-width">
+        <form [formGroup]="searchScribbleFormGroup" class="search-form">
+            <mat-form-field appearance="outline" class="search-form-field">
                 <mat-label>Search Scribbles</mat-label>
                 <input matInput formControlName="searchText" placeholder="Search your scribbles..">
                 <mat-icon matSuffix>search</mat-icon>
@@ -16,6 +32,10 @@
                 <mat-spinner [diameter]="40" class="loading-spinner"></mat-spinner>
                 <span>{{ loadingMessage }}</span>
             </div>
+            <div *ngIf="notes.length === 0" class="alert-box alert-box-border mt-3">
+                <mat-icon>sentiment_very_dissatisfied</mat-icon>
+                <h3>No notes to display in this page!</h3>
+            </div>
             <div class="col-md-4" *ngFor="let note of notes">
                 <mat-card class="example-card mt-2 mat-elevation-z0 outline">
                     <mat-card-title-group>
@@ -23,7 +43,8 @@
                             {{ note.title }}
                         </mat-card-title>
                         <mat-card-subtitle *ngIf="note.dueDate">Due: {{ note.dueDate | date }}</mat-card-subtitle>
-                        <mat-icon [matMenuTriggerFor]="editAndDeleteMenu" aria-label="Example icon-button with a menu">more_vert</mat-icon>
+                        <mat-icon [matMenuTriggerFor]="editAndDeleteMenu" aria-label="Example icon-button with a menu">more_vert
+                        </mat-icon>
                         <mat-menu #editAndDeleteMenu="matMenu" xPosition="before">
                             <ng-template matMenuContent>
                                 <button mat-menu-item (click)="editNote(note.id)">
@@ -34,15 +55,16 @@
                                 </button>
                             </ng-template>
                         </mat-menu>
-                    </mat-card-title-group>
-                    <mat-card-content>
+                        </mat-card-title-group>
+                        <mat-card-content>
                         
-                        <p>{{ note.description }}</p>
+                            <p>{{ note.description }}</p>
 
                     </mat-card-content>
                     <p class="last-updated-text"> Last updated: {{ note.updatedAt | date}} </p>
-                </mat-card>
+                    </mat-card>
             </div>
+                
         </div>
         <div class="example-button-row mt-3 pagination-btn-wrapper" *ngIf="!loading && notes.length !== 0">
             <button mat-mini-fab aria-label="Example icon button with a plus one icon" class="pagination-btn"

@@ -25,8 +25,10 @@ import { AuthService } from './services/auth/auth.service';
 import { HttpRequestInterceptor } from './providers/http.interceptor';
 import { CookieService } from 'ngx-cookie-service';
 import { AddScribbleComponent } from './components/add-scribble/add-scribble.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { DashboardComponent, DialogOverviewExampleDialog } from './components/dashboard/dashboard.component';
 import { EditScribbleComponent } from './components/edit-scribble/edit-scribble.component';
+import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
+
 
 @NgModule({
   declarations: [
@@ -39,7 +41,8 @@ import { EditScribbleComponent } from './components/edit-scribble/edit-scribble.
     ForgotPasswordComponent,
     AddScribbleComponent,
     DashboardComponent,
-    EditScribbleComponent
+    EditScribbleComponent,
+    DialogOverviewExampleDialog
   ],
   imports: [
     BrowserModule,
@@ -55,7 +58,7 @@ import { EditScribbleComponent } from './components/edit-scribble/edit-scribble.
     { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true }, 
     AuthGuard, 
     AuthRouteGuard, 
-    CookieService
+    CookieService,
     ],
   bootstrap: [AppComponent]
 })

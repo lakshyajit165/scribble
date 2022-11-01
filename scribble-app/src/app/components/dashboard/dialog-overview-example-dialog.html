@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>Enter date range</h1>
+<div mat-dialog-content>
+    <div class="row">
+        <div class="col-lg-12">
+            <div>
+                <mat-form-field appearance="outline" style="width: 100%">
+                    <mat-label>From Date</mat-label>
+                    <input matInput [matDatepicker]="fromDatePicker" [max]="data.toDate" [(ngModel)]="data.fromDate">
+                    <mat-hint>YYYY-MM-DD</mat-hint>
+                    <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #fromDatePicker></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="outline" style="width: 100%">
+                    <mat-label>To Date</mat-label>
+                    <input matInput [matDatepicker]="toDatePicker" [min]="data.fromDate" [(ngModel)]="data.toDate">
+                    <mat-hint>YYYY-MM-DD</mat-hint>
+                    <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #toDatePicker></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Filter</button>
+</div>

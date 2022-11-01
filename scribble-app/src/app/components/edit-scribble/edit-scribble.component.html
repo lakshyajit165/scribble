@@ -11,7 +11,7 @@
                 <span class="scribble-loading-text">Loading scribble...</span>
             </div>
         </div>
-        <div *ngIf="getScribbleError && !getScribbleLoading" class="mt-2">
+        <div *ngIf="getScribbleError && !getScribbleLoading" class="mt-2 mt-3">
             <mat-icon>sentiment_very_dissatisfied</mat-icon>
             <h3> {{ getScribbleErrorMessage }}</h3>
         </div>

@@ -22,8 +22,8 @@ export class NotesService {
 
   apiGateWay: string = 'http://localhost:9000/';
 
-  searchNotes(searchText: string, updatedOnOrAfter: string, updatedOnOrBefore: string, page: number, size: number): Observable<ISearchNotesResponse> {
-    return this._http.get<ISearchNotesResponse>(this.apiGateWay + `note-service/api/v1/notes/search?searchText=${searchText}&updatedOnOrAfter=${updatedOnOrAfter}&updatedOnOrBefore=${updatedOnOrBefore}&page=${page}&size=${size}`).pipe(
+  searchNotes(searchText: string, fromDate: string, toDate: string, page: number, size: number): Observable<ISearchNotesResponse> {
+    return this._http.get<ISearchNotesResponse>(this.apiGateWay + `note-service/api/v1/notes/search?searchText=${searchText}&updatedOnOrAfter=${fromDate}&updatedOnOrBefore=${toDate}&page=${page}&size=${size}`).pipe(
       map((response: ISearchNotesResponse) => response as ISearchNotesResponse)
     );
   }

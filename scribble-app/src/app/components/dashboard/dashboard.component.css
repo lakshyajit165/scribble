@@ -5,14 +5,14 @@
 .dashboard-header {
     display: inline-flex;
     justify-content: flex-start;
-        width: 100%;
+    width: 100%;
 }
 
 .add-note-btn {
     margin-left: auto;
     margin-bottom: 10px;
 }
-.form-field-width {
+.search-form-field {
     width: 100%;
 }
 
@@ -41,3 +41,16 @@
     justify-content: center;
     align-items: center;
 }
+.filter-icon-field {
+    width: 10%;
+}
+
+/* .alert-box {
+    width: 80%;
+    
+    background-color: rgb(231, 231, 231);
+}
+
+.alert-box-border {
+    border-left: 5px solid grey;
+} */
