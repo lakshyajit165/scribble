@@ -32,7 +32,7 @@
                 <mat-spinner [diameter]="40" class="loading-spinner"></mat-spinner>
                 <span>{{ loadingMessage }}</span>
             </div>
-            <div *ngIf="notes.length === 0" class="alert-box alert-box-border mt-3">
+            <div *ngIf="notes.length === 0 && !loading" class="alert-box alert-box-border mt-3">
                 <mat-icon>sentiment_very_dissatisfied</mat-icon>
                 <h3>No notes to display in this page!</h3>
             </div>
@@ -42,7 +42,9 @@
                         <mat-card-title>
                             {{ note.title }}
                         </mat-card-title>
-                        <mat-card-subtitle *ngIf="note.dueDate">Due: {{ note.dueDate | date }}</mat-card-subtitle>
+                        <mat-card-subtitle *ngIf="note.dueDate">
+                            <span>Due: {{ note.dueDate | date }}</span>
+                        </mat-card-subtitle>
                         <mat-icon [matMenuTriggerFor]="editAndDeleteMenu" aria-label="Example icon-button with a menu">more_vert
                         </mat-icon>
                         <mat-menu #editAndDeleteMenu="matMenu" xPosition="before">
@@ -55,14 +57,15 @@
                                 </button>
                             </ng-template>
                         </mat-menu>
-                        </mat-card-title-group>
-                        <mat-card-content>
+                    </mat-card-title-group>
+                    <mat-card-content>
                         
                             <p>{{ note.description }}</p>
 
                     </mat-card-content>
+                    <span *ngIf="note.label"><strong>Tag: {{ note.label }}</strong></span>
                     <p class="last-updated-text"> Last updated: {{ note.updatedAt | date}} </p>
-                    </mat-card>
+                </mat-card>
             </div>
                 
         </div>
