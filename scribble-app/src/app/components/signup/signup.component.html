@@ -21,7 +21,7 @@
                             <mat-error>Invalid Email!</mat-error>
                         </mat-form-field>
                         <div>
-                            <button mat-raised-button color="primary" *ngIf="!signUpAndForgotPasswordLoading;else show_spinner"
+                            <button mat-raised-button color="primary" *ngIf="!signUpLoading;else show_spinner"
                                 (click)="signUpUser(stepper)">Verify</button>
                             <ng-template #show_spinner>
                                 <span class="spinner">
