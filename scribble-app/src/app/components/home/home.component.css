@@ -1,5 +1,6 @@
 .sidenav-container {
   height: 100%;
+  
 }
 
 .sidenav {
@@ -10,6 +11,11 @@
   background: inherit;
 }
 
+.sidenav-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .mat-toolbar.mat-primary {
   position: sticky;
   top: 0;
