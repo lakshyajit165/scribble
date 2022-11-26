@@ -93,8 +93,8 @@ export class DashboardComponent implements OnInit {
       switchMap(fields => 
         this._notesService.searchNotes(
           fields['searchText'],
-          fields['fromDate'] ? fields['fromDate'] : '',
-          fields['toDate'] ? fields['toDate'] : '',
+          this.selectedFromDate ? moment(this.selectedFromDate).format("YYYY-MM-DD").toString() : "",
+          this.selectedToDate ? moment(this.selectedToDate).format("YYYY-MM-DD").toString() : "",
           this.page,
           this.size
         )
