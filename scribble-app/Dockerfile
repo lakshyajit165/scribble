@@ -1,13 +1,9 @@
-# Stage 1
 FROM node:16-alpine as node
-WORKDIR /usr/src/app
-COPY package*.json ./
-RUN npm install
-RUN npm install -g @angular/cli
+WORKDIR /app
 COPY . .
+RUN npm install
 RUN npm run build --prod
 
 # Stage 2
-
-EXPOSE 4200
-CMD ng serve --host 0.0.0.0  
+FROM nginx:alpine
+COPY --from=node /app/dist/scribble-app /usr/share/nginx/html

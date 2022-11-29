@@ -5,7 +5,7 @@ services:
         build:
             context: ./scribble-app
         ports:
-            - "4200:4200"
+            - "4200:80" # because angular assets are served through nginx and default port for nginx is 80
         container_name: scribble-app
         depends_on:
             [api-gateway, service-discovery]
