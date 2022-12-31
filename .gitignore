@@ -4,3 +4,4 @@ set_env_vars_dev.sh
 set_env_vars_local.sh
 pid.file
 .env
+postgres-data
