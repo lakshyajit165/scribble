@@ -9,6 +9,7 @@ import com.scribble.noteservice.exception.BadRequestException;
 import com.scribble.noteservice.exception.ResourceNotFoundException;
 import com.scribble.noteservice.model.Note;
 import com.scribble.noteservice.repository.NotesRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.Optional;
 
 
 @Service
+@Transactional
 public class NotesService {
 
     @Autowired

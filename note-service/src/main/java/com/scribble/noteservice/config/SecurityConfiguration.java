@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((authz) -> {
                             try {
                                 authz
-                                        .antMatchers(TEST_URL).permitAll()
+                                        .requestMatchers(TEST_URL).permitAll()
                                         .anyRequest().authenticated()
                                         .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                                         .and().addFilterBefore(cognitoJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

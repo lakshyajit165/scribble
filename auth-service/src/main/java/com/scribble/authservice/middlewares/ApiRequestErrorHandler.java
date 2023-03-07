@@ -11,6 +11,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -18,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * source: https://www.baeldung.com/global-error-handler-in-a-spring-rest-api
@@ -29,26 +32,24 @@ public class ApiRequestErrorHandler extends ResponseEntityExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(ApiRequestErrorHandler.class);
 
     // 400
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        List<String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.toList());
+        errors.addAll(ex.getBindingResult()
+                .getGlobalErrors()
+                .stream()
+                .map(ObjectError::getDefaultMessage).toList());
 
-    @Override
-    @NonNull
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        logger.info(ex.getClass().getName());
-        //
-        final List<String> errors = new ArrayList<String>();
-        for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.add(error.getField() + ": " + error.getDefaultMessage());
-        }
-        for (final ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-            errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
-        }
-        final ApiErrorDTO apiErrorDTO = new ApiErrorDTO("There are validation errors", errors);
-        return handleExceptionInternal(ex, apiErrorDTO, headers, HttpStatus.BAD_REQUEST, request);
+        ApiErrorDTO apiErrorDTO = new ApiErrorDTO("There are validation errors", errors);
+        return ResponseEntity.badRequest().body(apiErrorDTO);
     }
 
     // 404
-
-    @Override
     @NonNull
     protected ResponseEntity<Object> handleNoHandlerFoundException(
             final NoHandlerFoundException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
@@ -61,8 +62,6 @@ public class ApiRequestErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     // 405
-
-    @Override
     @NonNull
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(final HttpRequestMethodNotSupportedException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
         logger.info(ex.getClass().getName());
