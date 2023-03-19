@@ -13,7 +13,6 @@ import com.scribble.authservice.config.JwtConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -24,7 +23,6 @@ import java.net.URL;
 import static com.nimbusds.jose.JWSAlgorithm.RS256;
 
 @SpringBootApplication
-@EnableEurekaClient
 public class AuthServiceApplication {
 
 	@Autowired
@@ -46,6 +44,5 @@ public class AuthServiceApplication {
 		jwtProcessor.setJWSKeySelector(keySelector);
 		return jwtProcessor;
 	}
-
 
 }

@@ -1,6 +1,5 @@
 package com.scribble.noteservice;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jose.proc.JWSKeySelector;
@@ -14,10 +13,9 @@ import com.scribble.noteservice.config.JwtConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,7 +23,6 @@ import java.net.URL;
 import static com.nimbusds.jose.JWSAlgorithm.RS256;
 
 @SpringBootApplication
-@EnableEurekaClient
 public class NoteServiceApplication {
 
 	@Autowired

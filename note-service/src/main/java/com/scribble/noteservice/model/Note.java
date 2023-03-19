@@ -4,17 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.scribble.noteservice.model.DateAudit.DateAudit;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.groups.Default;
-import javax.ws.rs.DefaultValue;
-import java.io.Serializable;
 import java.time.Instant;
-import java.util.Date;
 
 @Entity
 @Table(name = "notes")

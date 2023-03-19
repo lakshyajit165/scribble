@@ -16,8 +16,8 @@ spring:
 
 
     datasource:
-#        url: jdbc:postgresql://${LOCAL_DOCKER_VM_IP}:5432/notesdb
-        url: ${SCRIBBLE_DB_ENDPOINT}
+        url: jdbc:postgresql://192.168.0.103:5432/notesdb
+#        url: ${SCRIBBLE_DB_ENDPOINT}
         driverClassName: org.postgresql.Driver
         platform: postgres
         username: ${SCRIBBLE_NOTESDB_USERNAME}
@@ -43,6 +43,9 @@ aws:
     access-secret: ${SCRIBBLE_AUTH_AWS_SECRET_KEY}
     default-region: ${SCRIBBLE_AUTH_AWS_DEFAULT_REGION}
 
+app:
+    cors:
+        allowedOrigins: http://localhost:4200 # Comma separated list of allowed origins
 
 logging:
     level:
@@ -53,11 +56,4 @@ logging:
                         security:
                             servlet:
                                 UserDetailsServiceAutoConfiguration: 'OFF'
-eureka:
-    client:
-        register-with-eureka: ${EUREKA_SERVICE_REGISTRATION}
-        fetch-registry: ${EUREKA_SERVICE_REGISTRATION}
-        service-url:
-            defaultZone: ${EUREKA_CLIENT_DEFAULTZONE}
-    instance:
-        prefer-ip-address: true
+

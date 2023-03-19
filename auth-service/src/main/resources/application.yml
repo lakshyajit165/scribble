@@ -32,14 +32,9 @@ logging:
               servlet:
                 UserDetailsServiceAutoConfiguration: 'OFF'
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: ${EUREKA_CLIENT_DEFAULTZONE}
-  instance:
-    prefer-ip-address: true
+app:
+  cors:
+    allowedOrigins: http://localhost:4200 # Comma separated list of allowed origins
 
 cookieDomain: ${COOKIE_DOMAIN}
 
