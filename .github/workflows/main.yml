@@ -3,8 +3,8 @@ name: Build, test and push note-service to docker
 on:
   push:
     branches: [master, main]
-    # paths:
-    #   - 'note-service/**'
+    paths:
+      - 'note-service/**'
 
 jobs:
   build-test-and-push-note-service:
