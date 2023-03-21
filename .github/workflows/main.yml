@@ -46,7 +46,7 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          IMAGE_NAME: scribble/note-service
+          IMAGE_NAME: lakshyajit165/scribble-note-service
           TAG: latest
         run: |
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
