@@ -22,6 +22,12 @@ jobs:
       - name: Build with Gradle
         working-directory: note-service
         run: ./gradlew build -x test
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: note-service-jar
+          path: note-service/build/libs/note-service-0.0.1-SNAPSHOT.jar
 
       - name: Run tests with Gradle
         working-directory: note-service
@@ -52,7 +58,13 @@ jobs:
       IMAGE_NAME: scribble/note-service
       TAG: latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: note-service-jar
+          path: note-service/build/libs/
 
       - name: Build and push Docker image
         run: |
