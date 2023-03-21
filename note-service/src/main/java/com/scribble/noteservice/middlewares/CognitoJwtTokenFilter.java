@@ -34,7 +34,6 @@ public class CognitoJwtTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             filterChain.doFilter(request, response);
-
         } catch (Exception e) {
             logger.error(e.getMessage());
             SecurityContextHolder.clearContext();
@@ -44,6 +43,5 @@ public class CognitoJwtTokenFilter extends OncePerRequestFilter {
             response.setStatus(e.getMessage().equals("Expired JWT") ? HttpServletResponse.SC_UNAUTHORIZED : HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write(mapper.writeValueAsString(genericNotesResponse));
         }
-
     }
 }
