@@ -31,7 +31,7 @@ RUN mkdir /app && \
 
 USER 1000
 
-COPY --chown=1000:1000 /tmp/note-service-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --chown=1000:1000 build/libs/note-service-0.0.1-SNAPSHOT.jar /app/app.jar
 WORKDIR /app
 
 EXPOSE 9002

@@ -7,7 +7,7 @@ on:
     #   - 'note-service/**'
 
 jobs:
-  build-and-test-note-service:
+  build-test-and-push-note-service:
     runs-on: ubuntu-latest
 
     steps:
@@ -48,26 +48,15 @@ jobs:
             exit 1
           fi
 
-  build-and-push-note-service-docker-image:
-    needs: build-and-test-note-service
-    if: needs.build-and-test-note-service.result == 'success'
-    runs-on: ubuntu-latest
-    env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      IMAGE_NAME: scribble/note-service
-      TAG: latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: note-service-jar
-          path: note-service/build/libs/
-
       - name: Build and push Docker image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          IMAGE_NAME: scribble/note-service
+          TAG: latest
         run: |
           echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
           docker build -t $IMAGE_NAME:$TAG ./note-service
           docker push $IMAGE_NAME:$TAG
+
+  
