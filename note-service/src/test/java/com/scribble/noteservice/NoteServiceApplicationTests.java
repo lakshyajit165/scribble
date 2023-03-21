@@ -316,7 +316,7 @@ class NoteServiceApplicationTests {
 				.contentType(MediaType.APPLICATION_JSON)
 				.param("searchText", "test")
 				.param("page", String.valueOf(1))
-				.param("size", String.valueOf(5)));
+				.param("size", String.valueOf(90)));
 		response.andDo(print())
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message").exists())
