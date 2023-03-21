@@ -1,0 +1,48 @@
+server:
+  port: ${SCRIBBLE_NOTE_SERVICE_PORT}
+
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: sa
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    password: sa
+
+  application:
+    name: note-service
+    security:
+      oauth2:
+        resourceserver:
+          jwt:
+            issuer-uri: ${SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
+    jackson:
+      default-property-inclusion: non_null # to NOT include any null values in the json response
+      time-zone: UTC
+      serialization:
+        WRITE_DATES_AS_TIMESTAMPS: 'false'
+
+aws:
+  cognito:
+    connectionTimeout: '2000'
+    userPoolId: ${SCRIBBLE_AUTH_AWS_COGNITO_USERPOOL_ID}
+    jwk: ${SCRIBBLE_AUTH_AWS_COGNITO_JWK}
+    clientId: ${SCRIBBLE_AUTH_AWS_COGNITO_CLIENT_ID}
+    region: ${SCRIBBLE_AUTH_AWS_COGNITO_REGION}
+    readTimeout: '2000'
+  access-key: ${SCRIBBLE_AUTH_AWS_ACCESS_KEY}
+  access-secret: ${SCRIBBLE_AUTH_AWS_SECRET_KEY}
+  default-region: ${SCRIBBLE_AUTH_AWS_DEFAULT_REGION}
+
+app:
+  cors:
+    allowedOrigins: http://localhost:4200 # Comma separated list of allowed origins
+
+logging:
+  level:
+    org:
+      springframework:
+        boot:
+          autoconfigure:
+            security:
+              servlet:
+                UserDetailsServiceAutoConfiguration: 'OFF'

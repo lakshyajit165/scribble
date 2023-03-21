@@ -30,23 +30,50 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.cors().and().csrf().disable()
+        http
+                .cors()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .csrf()
+                .disable()
+                .formLogin()
+                .disable()
+                .httpBasic()
+                .disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                .and()
                 .authorizeHttpRequests((authz) -> {
                             try {
-                                authz
-                                        .requestMatchers(TEST_URL).permitAll()
-                                        .anyRequest().authenticated()
-                                        .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                                        .and().addFilterBefore(cognitoJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                                authz.requestMatchers(
+                                                "/",
+                                                "/error",
+                                                "/favicon.ico",
+                                                "/*/*.png",
+                                                "/*/*.gif",
+                                                "/*/*.svg",
+                                                "/*/*.jpg",
+                                                "/*/*.html",
+                                                "/*/*.css",
+                                                "/*/*.js",
+                                                TEST_URL
+                                        ).permitAll()
+                                        .anyRequest()
+                                        .authenticated();
+
+
                             } catch (Exception e) {
-                               logger.error(e.getMessage());
+                                logger.error(e.getMessage());
                             }
                         }
                 )
                 .httpBasic(withDefaults());
+
+        // Add our custom Token based authentication filter
+        http.addFilterBefore(cognitoJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
 }
-
-

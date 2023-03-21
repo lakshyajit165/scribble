@@ -109,7 +109,7 @@ public class NotesService {
         Note note = notesRepository.findById(noteId).get();// already checked if note exists in if
         // check if the user trying to update the note, actually created the note
         if(!authentication.getName().equals(note.getAuthor())){
-            throw new AccessDeniedException("Write", "Note");
+            throw new AccessDeniedException("note", "Update");
         }
         Instant now = Instant.now();
         note.setUpdatedAt(now);
@@ -134,16 +134,16 @@ public class NotesService {
         Note note = notesRepository.getReferenceById(noteId);
         // check if user trying to delete the note actually created it
         if(!authentication.getName().equals(note.getAuthor())){
-            throw new AccessDeniedException("Delete", "Note");
+            throw new AccessDeniedException("note", "Delete");
         }
         notesRepository.deleteById(noteId);
     }
 
     private void validatePageNumberAndSize(int page, int size) {
         if(page < 0)
-            throw new BadRequestException("Page size cannot be less than zero.");
+            throw new BadRequestException("Page number cannot be less than zero!");
         if(size > AppConstants.MAX_PAGE_SIZE)
-            throw new BadRequestException("Page size must not be greater than " + AppConstants.MAX_PAGE_SIZE);
+            throw new BadRequestException("Page size must not be greater than " + AppConstants.MAX_PAGE_SIZE + " !");
 
     }
 

@@ -1,10 +1,7 @@
 package com.scribble.noteservice.controller;
 
 import com.scribble.noteservice.constants.AppConstants;
-import com.scribble.noteservice.dto.CreateNoteDTO;
-import com.scribble.noteservice.dto.GenericNotesResponse;
-import com.scribble.noteservice.dto.PaginatedResponse;
-import com.scribble.noteservice.dto.UpdateNoteDTO;
+import com.scribble.noteservice.dto.*;
 import com.scribble.noteservice.exception.AccessDeniedException;
 import com.scribble.noteservice.exception.BadRequestException;
 import com.scribble.noteservice.exception.ResourceNotFoundException;
@@ -14,13 +11,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import org.springframework.web.context.request.WebRequest;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -120,7 +128,7 @@ public class NotesController {
         try{
             if(noteId.matches("[0-9]+")){
                 Note note = notesService.updateNote(updateNoteDTO, Long.parseLong(noteId), authentication);
-                return ResponseEntity.status(200).body(new GenericNotesResponse<>("Note udpated!", note));
+                return ResponseEntity.status(200).body(new GenericNotesResponse<>("Note updated!", note));
             }
             return ResponseEntity.status(400).body(new GenericNotesResponse<>("Invalid note id!"));
         } catch (AccessDeniedException e) {

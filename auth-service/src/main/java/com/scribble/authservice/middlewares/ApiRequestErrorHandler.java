@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -32,8 +33,10 @@ public class ApiRequestErrorHandler extends ResponseEntityExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(ApiRequestErrorHandler.class);
 
     // 400
-    @NonNull
-    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -49,9 +52,10 @@ public class ApiRequestErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     // 404
-    @NonNull
+    @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(
-            final NoHandlerFoundException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+            NoHandlerFoundException ex,
+            HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         logger.info(ex.getClass().getName());
         //
         final String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
@@ -61,10 +65,11 @@ public class ApiRequestErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     // 405
-    @NonNull
-    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(final HttpRequestMethodNotSupportedException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+    @Override
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex,
+            HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         logger.info(ex.getClass().getName());
-        //
         final StringBuilder builder = new StringBuilder();
         builder.append(ex.getMethod());
         builder.append(" method is not supported for this request. Supported methods are ");

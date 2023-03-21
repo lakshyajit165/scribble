@@ -14,7 +14,7 @@ public class AccessDeniedException extends Exception {
     private String resourceName;
     private String operation;
     public AccessDeniedException(String resourceName, String operation) {
-        super(String.format("%s access denied for resource %s ", operation, resourceName));
+        super(String.format("%s access denied for resource %s", operation, resourceName));
         this.resourceName = resourceName;
     }
 }
