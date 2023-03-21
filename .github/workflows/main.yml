@@ -49,7 +49,7 @@ jobs:
           IMAGE_NAME: scribble/note-service
           TAG: latest
         run: |
-          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker build -t $IMAGE_NAME:$TAG ./note-service
           docker push $IMAGE_NAME:$TAG
 
