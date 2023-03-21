@@ -21,7 +21,7 @@ jobs:
 
       - name: Build with Gradle
         working-directory: note-service
-        run: ./gradlew build
+        run: ./gradlew build -x test
 
       - name: Run tests with Gradle
         working-directory: note-service
