@@ -1,9 +1,9 @@
 ### Scribble Web App
 [![Build, test and push note-service to docker](https://github.com/lakshyajit165/scribble/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/lakshyajit165/scribble/actions/workflows/main.yml)
-> Scribble is a sample web application designed using spring cloud design pattern which consists of Spring Cloud Gateway for reverse-proxy and request filtering, Eureka Server for service discovery along with 2 other microservices - auth and notes.
+> Scribble is a sample web application designed using microservice architecture which consists of nginx for reverse-proxy and request filtering, along with 2 other microservices - auth and notes.
 
 #### Features implemented in this web app:
-- Spring Cloud Gateway (as reverse proxy, load balancer and circuit breaker).
+- Nginx (as reverse proxy, api-gateway and circuit breaker).
 - AWS Cognito for authentication with refresh token in SpringBoot microservices along with JWT.
 - Server side cookies.
 - DB queries using predicates(Inside notes microservice for the search notes API)
