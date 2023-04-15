@@ -35,4 +35,4 @@ COPY --chown=1000:1000 build/libs/note-service-0.0.1-SNAPSHOT.jar /app/app.jar
 WORKDIR /app
 
 EXPOSE 9002
-ENTRYPOINT [ "/jre/bin/java", "-jar", "/app/app.jar" ]
+ENTRYPOINT [ "/jre/bin/java", "-Dspring.profiles.active=prod", "-jar", "/app/app.jar" ]
