@@ -11,3 +11,4 @@
 - Refresh token implementation with http request interceptor in Angular.
 - Angular route guards.
 - Debouncing for search notes on the client side.
+- Testing jenkins pipeline1.
