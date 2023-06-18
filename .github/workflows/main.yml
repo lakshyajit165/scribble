@@ -1,3 +1,5 @@
+# Workflow to build and run tests
+
 # name: Build, test and push note-service to docker
 
 # on:
@@ -26,15 +28,15 @@
 #       - name: Run tests with Gradle
 #         working-directory: note-service
 #         env:
-#           SCRIBBLE_NOTE_SERVICE_PORT: ${{ secrets.SCRIBBLE_NOTE_SERVICE_PORT }}
-#           SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${{ secrets.SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI }}
-#           SCRIBBLE_AUTH_AWS_COGNITO_USERPOOL_ID: ${{ secrets.SCRIBBLE_AUTH_AWS_COGNITO_USERPOOL_ID }}
-#           SCRIBBLE_AUTH_AWS_COGNITO_JWK: ${{ secrets.SCRIBBLE_AUTH_AWS_COGNITO_JWK }}
-#           SCRIBBLE_AUTH_AWS_COGNITO_CLIENT_ID: ${{ secrets.SCRIBBLE_AUTH_AWS_COGNITO_CLIENT_ID }}
-#           SCRIBBLE_AUTH_AWS_COGNITO_REGION: ${{ secrets.SCRIBBLE_AUTH_AWS_COGNITO_REGION }}
-#           SCRIBBLE_AUTH_AWS_ACCESS_KEY: ${{ secrets.SCRIBBLE_AUTH_AWS_ACCESS_KEY }}
-#           SCRIBBLE_AUTH_AWS_SECRET_KEY: ${{ secrets.SCRIBBLE_AUTH_AWS_SECRET_KEY }}
-#           SCRIBBLE_AUTH_AWS_DEFAULT_REGION: ${{ secrets.SCRIBBLE_AUTH_AWS_DEFAULT_REGION }}
+          # SCRIBBLE_NOTE_SERVICE_PORT: ${{ secrets.SCRIBBLE_NOTE_SERVICE_PORT }}
+          # SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${{ secrets.SCRIBBLE_AUTH_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI }}
+          # SCRIBBLE_AUTH_AWS_COGNITO_USERPOOL_ID: ${{ secrets.SCRIBBLE_AUTH_AWS_COGNITO_USERPOOL_ID }}
+          # SCRIBBLE_AUTH_AWS_COGNITO_JWK: ${{ secrets.SCRIBBLE_AUTH_AWS_COGNITO_JWK }}
+          # SCRIBBLE_AUTH_AWS_COGNITO_CLIENT_ID: ${{ secrets.SCRIBBLE_AUTH_AWS_COGNITO_CLIENT_ID }}
+          # SCRIBBLE_AUTH_AWS_COGNITO_REGION: ${{ secrets.SCRIBBLE_AUTH_AWS_COGNITO_REGION }}
+          # SCRIBBLE_AUTH_AWS_ACCESS_KEY: ${{ secrets.SCRIBBLE_AUTH_AWS_ACCESS_KEY }}
+          # SCRIBBLE_AUTH_AWS_SECRET_KEY: ${{ secrets.SCRIBBLE_AUTH_AWS_SECRET_KEY }}
+          # SCRIBBLE_AUTH_AWS_DEFAULT_REGION: ${{ secrets.SCRIBBLE_AUTH_AWS_DEFAULT_REGION }}
 #         run: |
 #           ./gradlew test
 #           # Check the exit code of the previous command
@@ -52,5 +54,42 @@
 #           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 #           docker build -t $IMAGE_NAME:$TAG ./note-service
 #           docker push $IMAGE_NAME:$TAG
+
+
+# Workflow to trigger jenkins build
+
+name: Trigger Jenkins
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Trigger POST Request
+        run: |
+          echo "{
+            \"ref\": \"${{ github.ref }}\",
+            \"sha\": \"${{ github.sha }}\",
+            \"repository\": \"${{ github.repository }}\",
+            \"event\": \"${{ github.event_name }}\",
+            \"actor\": \"${{ github.actor }}\",
+            \"head_ref\": \"${{ github.head_ref }}\",
+            \"base_ref\": \"${{ github.base_ref }}\",
+            \"pull_request_number\": \"${{ github.event.pull_request.number }}\"
+          }" > payload.json
+          curl -X POST -H "Content-Type: application/json" -H "ngrok-skip-browser-warning: true" -d @payload.json https://e531-103-186-41-136.ngrok-free.app/generic-webhook-trigger/invoke
+
+
 
   
