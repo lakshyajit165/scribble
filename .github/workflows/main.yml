@@ -88,7 +88,7 @@ jobs:
             \"base_ref\": \"${{ github.base_ref }}\",
             \"pull_request_number\": \"${{ github.event.pull_request.number }}\"
           }" > payload.json
-          curl -X POST -H "Content-Type: application/json" -H "ngrok-skip-browser-warning: true" -d @payload.json https://e531-103-186-41-136.ngrok-free.app/generic-webhook-trigger/invoke?token=scribble_build_job
+          curl -X POST -H "Content-Type: application/json" -H "ngrok-skip-browser-warning: true" -d @payload.json https://1801-103-186-41-136.ngrok-free.app/generic-webhook-trigger/invoke?token=scribble_build_job
 
 
 
