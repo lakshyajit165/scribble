@@ -49,13 +49,24 @@ app:
     cors:
         allowedOrigins: http://localhost:4200 # Comma separated list of allowed origins
 
+
+#Reason: The WARN level will only log warnings, errors, and critical issues related to Hibernate. This reduces the verbosity of logs and avoids performance impacts that can occur with DEBUG logging, especially in production where SQL logging can be sensitive and can generate a large volume of logs.
+#    This ensures that only important messages like potential issues or problems with the ORM layer are logged, without the detailed SQL and parameter information.
+#springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration: 'WARN'
+#
+#Reason: Setting this to WARN helps you capture any issues related to the auto-configuration of Spring Security while avoiding unnecessary logs that could clutter the production logs.
+#    This will only log messages if there is a potential problem or misconfiguration within the UserDetailsServiceAutoConfiguration setup, rather than verbose info or debug logs.
+
 logging:
     level:
         org:
+            hibernate: 'WARN'
             springframework:
                 boot:
                     autoconfigure:
                         security:
                             servlet:
-                                UserDetailsServiceAutoConfiguration: 'OFF'
+                                UserDetailsServiceAutoConfiguration: 'WARN'
+
+
 
