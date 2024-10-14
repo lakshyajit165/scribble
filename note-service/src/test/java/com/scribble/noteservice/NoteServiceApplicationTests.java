@@ -74,8 +74,7 @@ class NoteServiceApplicationTests {
 	 * */
 	@Test
 	@WithMockUser(username = "user1@test.com", password = "pwd")
-	public void createNoteFailure() throws Exception {
-		// creating note with empty description
+	public void createNoteWithEmptyDescription() throws Exception {
 		CreateNoteDTO createNoteDTO = new CreateNoteDTO("Test title", "", "Test label", new Date());
 		ResultActions response = mockMvc.perform(post("/api/v1/notes/create_note")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -86,6 +85,25 @@ class NoteServiceApplicationTests {
 				.andExpect(jsonPath("$.message").value("There are validation errors"))
 				.andExpect(jsonPath("$.errors").exists())
 				.andExpect(jsonPath("$.errors[0]").value("Description is required"));
+	}
+
+	/**
+	 * Failure case for create note
+	 * */
+	@Test
+	@WithMockUser(username = "user1@test.com", password = "pwd")
+	public void createNoteWithDescriptionOfMoreThan300Chars() throws Exception {
+		String testDescription = "This is a string that is meant to be just a little over three hundred characters long so that you can use it for testing purposes. The quick brown fox jumps over the lazy dog multiple times to ensure that the length of this string exceeds the limit. Hopefully, this should now be just over three hundred characters.\n";
+		CreateNoteDTO createNoteDTO = new CreateNoteDTO("Test title", testDescription, "Test label", new Date());
+		ResultActions response = mockMvc.perform(post("/api/v1/notes/create_note")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(createNoteDTO)));
+		response.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").exists())
+				.andExpect(jsonPath("$.message").value("There are validation errors"))
+				.andExpect(jsonPath("$.errors").exists())
+				.andExpect(jsonPath("$.errors[0]").value("Description must be 300 characters or less"));
 	}
 
 	/**
@@ -340,3 +358,6 @@ class NoteServiceApplicationTests {
 	}
 
 }
+
+
+
