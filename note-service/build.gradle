@@ -37,10 +37,11 @@ dependencies {
 	implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.5'
 	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.3'
 	testImplementation 'org.springframework.security:spring-security-test:6.0.2'
-
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	afterTest { desc, result ->
+		logger.quiet "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+	}
 }
-
