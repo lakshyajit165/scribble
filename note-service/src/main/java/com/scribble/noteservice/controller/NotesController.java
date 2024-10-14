@@ -121,7 +121,7 @@ public class NotesController {
 
     @PatchMapping("/update_note/{noteId}")
     public ResponseEntity<?> updateNoteById(
-            @RequestBody UpdateNoteDTO updateNoteDTO,
+            @Valid @RequestBody UpdateNoteDTO updateNoteDTO,
             @PathVariable("noteId") String noteId,
             Authentication authentication
     ){

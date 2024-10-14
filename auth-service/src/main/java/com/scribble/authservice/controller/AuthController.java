@@ -162,7 +162,9 @@ public class AuthController {
             ResponseCookie refreshTokenCookie = ResponseCookie.from(REFRESH_TOKEN, signInCompleteResult.getRefreshToken())
                     .httpOnly(true).domain(cookieDomain).path("/")
                     .build();
-            // normal cookie - required to maintain auth state(route guards) on client side
+            /** normal cookie - required to maintain auth state(route guards) on client side
+             * (Because http only cookies can't be parsed by JS on the client side)
+             */
             ResponseCookie encryptedEmailCookie = ResponseCookie.from(USER_PROFILE, encrypt(userSignInRequest.getEmail()))
                     .domain(cookieDomain).path("/")
                     .build();

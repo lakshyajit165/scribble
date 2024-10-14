@@ -1,5 +1,6 @@
 package com.scribble.noteservice.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class CreateNoteDTO {
     private String title="Untitled";
 
     @NotBlank(message = "Description is required")
+    @Size(max = 300, message = "Description must be 300 characters or less")
     private String description;
 
     // label might be empty
