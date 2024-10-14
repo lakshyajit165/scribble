@@ -1,6 +1,8 @@
-<span class="snackbar-data">
-    {{ data.message | truncate : 40 }}
+<div class="snackbar-data">
+  <span>{{ data.message | truncate : 200 }}</span>
+  <span class="icon">
     <mat-icon>
-        {{ data.icon }}
+      {{ data.icon }}
     </mat-icon>
-</span>
+  </span>
+</div>

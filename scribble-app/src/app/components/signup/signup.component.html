@@ -1,69 +1,127 @@
 <section class="col-lg-12 signup-section">
-    <mat-card class="mx-auto signup-card mat-elevation-z0">
-        <div class="center-text mb-2">
-            <mat-icon class="scribble-icon">playlist_add_check</mat-icon>
-        </div>
-        <mat-card-header class="mb-3 center-text">
+  <mat-card class="mx-auto signup-card mat-elevation-z0">
+    <div class="center-text mb-2">
+      <mat-icon class="scribble-icon">playlist_add_check</mat-icon>
+    </div>
+    <mat-card-header class="mb-3 center-text">
+      <mat-card-title> SignUp to Scribble </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-stepper [linear]="true" #stepper>
+        <mat-step [stepControl]="emailFormGroup" [editable]="false">
+          <form [formGroup]="emailFormGroup">
+            <ng-template matStepLabel class="stepper-label"
+              >Verify Email</ng-template
+            >
+            <mat-form-field appearance="outline" class="form-field-width">
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                placeholder="Enter your Email"
+                formControlName="email"
+                [errorStateMatcher]="_matcher"
+                required
+              />
+              <mat-error>Invalid Email!</mat-error>
+            </mat-form-field>
+            <div>
+              <button
+                mat-raised-button
+                color="primary"
+                *ngIf="!signUpLoading; else show_spinner"
+                (click)="signUpUser(stepper)"
+              >
+                Verify
+              </button>
+              <ng-template #show_spinner>
+                <span class="spinner">
+                  <mat-spinner [diameter]="35"></mat-spinner>
+                </span>
+              </ng-template>
+            </div>
+          </form>
+        </mat-step>
+        <mat-step [stepControl]="confirmPasswordFormGroup">
+          <ng-template matStepLabel>Confirm Password</ng-template>
+          <form [formGroup]="confirmPasswordFormGroup">
+            <mat-form-field appearance="outline" class="form-field-width">
+              <mat-label>Verification Code</mat-label>
+              <input
+                matInput
+                formControlName="verificationCode"
+                placeholder="Enter verification code sent to your email."
+                [errorStateMatcher]="_matcher"
+                required
+                [type]="hideVerificationCode ? 'password' : 'text'"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="hideVerificationCode = !hideVerificationCode"
+                [attr.aria-label]="'Hide verification code'"
+                [attr.aria-pressed]="hideVerificationCode"
+              >
+                <mat-icon>{{
+                  hideVerificationCode ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
+              <mat-error>Verification code is required!</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="form-field-width">
+              <mat-label>Password</mat-label>
+              <input
+                matInput
+                formControlName="password"
+                placeholder="Set a password"
+                [errorStateMatcher]="_matcher"
+                required
+                [type]="hidePassword ? 'password' : 'text'"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="hidePassword = !hidePassword"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hidePassword"
+              >
+                <mat-icon>{{
+                  hidePassword ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
+              <mat-error>Password is required!</mat-error>
+            </mat-form-field>
+            <div>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="confirmPassword()"
+              >
+                Sign Up
+              </button>
+              <button mat-button (click)="stepper.reset()" color="primary">
+                Reset
+              </button>
+            </div>
+          </form>
+        </mat-step>
+      </mat-stepper>
+      <p class="mt-3 center-text">OR</p>
+      <p class="mat-h3 center-text">
+        Already have an account ?
 
-            <mat-card-title>
-                SignUp to Scribble
-            </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <mat-stepper [linear]="true" #stepper>
-                <mat-step [stepControl]="emailFormGroup" [editable]="false">
-                    <form [formGroup]="emailFormGroup">
-                        <ng-template matStepLabel class="stepper-label">Verify Email</ng-template>
-                        <mat-form-field appearance="outline" class="form-field-width">
-                            <mat-label>Email</mat-label>
-                            <input matInput placeholder="Enter your Email" formControlName="email"
-                                [errorStateMatcher]="_matcher" required>
-                            <mat-error>Invalid Email!</mat-error>
-                        </mat-form-field>
-                        <div>
-                            <button mat-raised-button color="primary" *ngIf="!signUpLoading;else show_spinner"
-                                (click)="signUpUser(stepper)">Verify</button>
-                            <ng-template #show_spinner>
-                                <span class="spinner">
-                                    <mat-spinner [diameter]="35"></mat-spinner>
-                                </span>
-                            </ng-template>
-                        </div>
-                    </form>
-                </mat-step>
-                <mat-step [stepControl]="confirmPasswordFormGroup">
-                    <ng-template matStepLabel>Confirm Password</ng-template>
-                    <form [formGroup]="confirmPasswordFormGroup">
-                        <mat-form-field appearance="outline" class="form-field-width">
-                            <mat-label>Verification Code</mat-label>
-                            <input matInput formControlName="verificationCode"
-                                placeholder="Enter verification code sent to your email." [errorStateMatcher]="_matcher"
-                                required>
-                            <mat-error>Verification code is required!</mat-error>
-                        </mat-form-field>
-                        <mat-form-field appearance="outline" class="form-field-width">
-                            <mat-label>Password</mat-label>
-                            <input matInput formControlName="password" placeholder="Set a password"
-                                [errorStateMatcher]="_matcher" type="password">
-                            <mat-error>Password is required!</mat-error>
-                        </mat-form-field>
-                        <div>
-                            <button mat-raised-button color="primary" (click)="confirmPassword()">Sign Up</button>
-                            <button mat-button (click)="stepper.reset()" color="primary">Reset</button>
-                        </div>
-                    </form>
-                </mat-step>
-            </mat-stepper>
-            <p class="mt-3 center-text"> OR </p>
-            <p class="mat-h3 center-text">
-                Already have an account ?
-
-                <a routerLink="/login" style="text-decoration: none; margin-left: 5px; color:rgb(0, 136, 255)">
-                    <strong>Login here</strong>
-                </a>
-            </p>
-        </mat-card-content>
-
-    </mat-card>
-
+        <a
+          routerLink="/login"
+          style="
+            text-decoration: none;
+            margin-left: 5px;
+            color: rgb(0, 136, 255);
+          "
+        >
+          <strong>Login here</strong>
+        </a>
+      </p>
+    </mat-card-content>
+  </mat-card>
 </section>

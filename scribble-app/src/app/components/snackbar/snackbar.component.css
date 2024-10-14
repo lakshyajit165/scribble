@@ -6,7 +6,8 @@
     text-align: left;
 }
 
-.message {
-    justify-content: flex-start;
-    margin-right: 8px;
+.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
