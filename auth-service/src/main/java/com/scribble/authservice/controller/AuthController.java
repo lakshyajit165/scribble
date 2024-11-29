@@ -295,14 +295,14 @@ public class AuthController {
      *
      * */
     @GetMapping("/is_loggedin")
-    public ResponseEntity<?> isUserLoggedIn(@CookieValue("id_token") String idToken){
+    public ResponseEntity<?> isUserLoggedIn(@CookieValue("id_token") String idToken, @CookieValue("refresh_token") String refreshToken){
         try {
             if(idToken != null) {
                 SignedJWT signedJWT = SignedJWT.parse(idToken);
                 JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
                 Map<String, Object> idTokenClaim = claimsSet.getClaims();
                 // if expiry_at timestamp is greater than current timestamp, return false, else return true
-                if(idTokenClaim.get("exp").toString().compareTo(idTokenClaim.get("iat").toString()) > 0)
+                if(idTokenClaim.get("exp").toString().compareTo(idTokenClaim.get("iat").toString()) > 0 && validateRefreshToken(refreshToken))
                     return ResponseEntity.status(200).body(new GenericAuthResponse("true"));
                 return ResponseEntity.status(200).body(new GenericAuthResponse("false"));
             }else{
@@ -381,6 +381,32 @@ public class AuthController {
         AdminDeleteUserRequest deleteUserRequest = new AdminDeleteUserRequest()
                 .withUserPoolId(userPoolId).withUsername(email);
         cognitoClient.adminDeleteUser(deleteUserRequest);
+    }
+
+    private boolean validateRefreshToken(String refreshToken) {
+
+        try {
+            AdminInitiateAuthRequest validateRefreshTokenRequest = new AdminInitiateAuthRequest();
+            validateRefreshTokenRequest
+                    .withAuthFlow(AuthFlowType.REFRESH_TOKEN_AUTH)
+                    .withClientId(clientId)
+                    .withUserPoolId(userPoolId)
+                    .withAuthParameters(Map.of("REFRESH_TOKEN", refreshToken));
+
+
+            AdminInitiateAuthResult validateRefreshTokenResult = cognitoClient.adminInitiateAuth(validateRefreshTokenRequest);
+            // If we get a response, the refresh token is valid
+            return true;
+
+        } catch (AWSCognitoIdentityProviderException e) {
+            logger.error(e.getMessage());
+            // Refresh token is invalid or expired
+            return false;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            // Handle other exceptions (e.g., network error, invalid client ID)
+            return false;
+        }
     }
 
     private String encrypt(String plainText)
