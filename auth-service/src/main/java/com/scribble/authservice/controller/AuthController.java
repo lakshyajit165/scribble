@@ -162,16 +162,10 @@ public class AuthController {
             ResponseCookie refreshTokenCookie = ResponseCookie.from(REFRESH_TOKEN, signInCompleteResult.getRefreshToken())
                     .httpOnly(true).domain(cookieDomain).path("/")
                     .build();
-            /** normal cookie - required to maintain auth state(route guards) on client side
-             * (Because http only cookies can't be parsed by JS on the client side)
-             */
-            ResponseCookie encryptedEmailCookie = ResponseCookie.from(USER_PROFILE, encrypt(userSignInRequest.getEmail()))
-                    .domain(cookieDomain).path("/")
-                    .build();
 
             return ResponseEntity
                     .status(200)
-                    .header(HttpHeaders.SET_COOKIE, idTokenCookie.toString(), refreshTokenCookie.toString(), encryptedEmailCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, idTokenCookie.toString(), refreshTokenCookie.toString())
                     .body(new GenericAuthResponse("User signed in."));
 
         } catch (AWSCognitoIdentityProviderException e) {
@@ -295,14 +289,14 @@ public class AuthController {
      *
      * */
     @GetMapping("/is_loggedin")
-    public ResponseEntity<?> isUserLoggedIn(@CookieValue("id_token") String idToken){
+    public ResponseEntity<?> isUserLoggedIn(@CookieValue("id_token") String idToken, @CookieValue("refresh_token") String refreshToken){
         try {
             if(idToken != null) {
                 SignedJWT signedJWT = SignedJWT.parse(idToken);
                 JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
                 Map<String, Object> idTokenClaim = claimsSet.getClaims();
                 // if expiry_at timestamp is greater than current timestamp, return false, else return true
-                if(idTokenClaim.get("exp").toString().compareTo(idTokenClaim.get("iat").toString()) > 0)
+                if(idTokenClaim.get("exp").toString().compareTo(idTokenClaim.get("iat").toString()) > 0 && validateRefreshToken(refreshToken))
                     return ResponseEntity.status(200).body(new GenericAuthResponse("true"));
                 return ResponseEntity.status(200).body(new GenericAuthResponse("false"));
             }else{
@@ -383,19 +377,30 @@ public class AuthController {
         cognitoClient.adminDeleteUser(deleteUserRequest);
     }
 
-    private String encrypt(String plainText)
-            throws Exception {
-        // encryption for sending email in the response cookie
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES"); // throws NoSuchAlgorithmException
-        keyGenerator.init(128); // block size is 128bits
-        SecretKey secretKey = keyGenerator.generateKey();
-        cipher = Cipher.getInstance("AES"); // throws NoSuchPaddingException
+    private boolean validateRefreshToken(String refreshToken) {
 
-        byte[] plainTextByte = plainText.getBytes();
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        byte[] encryptedByte = cipher.doFinal(plainTextByte);
-        Base64.Encoder encoder = Base64.getEncoder();
-        return encoder.encodeToString(encryptedByte);
+        try {
+            AdminInitiateAuthRequest validateRefreshTokenRequest = new AdminInitiateAuthRequest();
+            validateRefreshTokenRequest
+                    .withAuthFlow(AuthFlowType.REFRESH_TOKEN_AUTH)
+                    .withClientId(clientId)
+                    .withUserPoolId(userPoolId)
+                    .withAuthParameters(Map.of("REFRESH_TOKEN", refreshToken));
+
+
+            AdminInitiateAuthResult validateRefreshTokenResult = cognitoClient.adminInitiateAuth(validateRefreshTokenRequest);
+            // If we get a response, the refresh token is valid
+            return true;
+
+        } catch (AWSCognitoIdentityProviderException e) {
+            logger.error(e.getMessage());
+            // Refresh token is invalid or expired
+            return false;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            // Handle other exceptions (e.g., network error, invalid client ID)
+            return false;
+        }
     }
 
 }

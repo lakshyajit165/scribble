@@ -68,10 +68,12 @@ export class LoginComponent implements OnInit {
       this._authService.login(this.userLoginPayload).subscribe({
         next: (data: IGenericResponse) => {
           this.loginUserLoading = false;
+          this._authService.updateisLoggedInStatus(true);
           this._router.navigate(['/home']);
         },
         error: (err) => {
           this.loginUserLoading = false;
+          this._authService.updateisLoggedInStatus(false);
           if (err.error && err.error.message) {
             this._snackBarService.showSnackBar(
               err.error.message,
@@ -89,6 +91,7 @@ export class LoginComponent implements OnInit {
       });
     } else {
       this.loginUserLoading = false;
+      this._authService.updateisLoggedInStatus(false);
       this._snackBarService.showSnackBar(
         'Invalid data!',
         3000,

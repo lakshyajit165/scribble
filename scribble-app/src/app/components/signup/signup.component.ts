@@ -176,10 +176,12 @@ export class SignupComponent implements OnInit {
       this._authService.login(this.userLoginPayload).subscribe({
         next: (data: IGenericResponse) => {
           this.confirmPasswordLoading = false;
+          this._authService.updateisLoggedInStatus(true);
           this._router.navigate(['/home']);
         },
         error: (err) => {
           this.confirmPasswordLoading = false;
+          this._authService.updateisLoggedInStatus(false);
           if (err.error && err.error.message) {
             this._snackBarService.showSnackBar(
               err.error.message,
@@ -198,6 +200,7 @@ export class SignupComponent implements OnInit {
       });
     } else {
       this.confirmPasswordLoading = false;
+      this._authService.updateisLoggedInStatus(false);
       this._snackBarService.showSnackBar(
         'Invalid data!',
         3000,
