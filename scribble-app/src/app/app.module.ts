@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -17,13 +17,17 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { AuthGuard } from './utils/auth.guard';
 import { AuthRouteGuard } from './utils/authroute.guard';
 import { HttpRequestInterceptor } from './providers/http.interceptor';
-import { CookieService } from 'ngx-cookie-service';
 import { AddScribbleComponent } from './components/add-scribble/add-scribble.component';
 import {
   DashboardComponent,
   DialogOverviewExampleDialog,
 } from './components/dashboard/dashboard.component';
 import { EditScribbleComponent } from './components/edit-scribble/edit-scribble.component';
+import { AuthService } from './services/auth/auth.service';
+
+export function initializeAuth(authService: AuthService): () => void {
+  return () => authService.checkAuthStatus();
+}
 
 @NgModule({
   declarations: [
@@ -51,13 +55,18 @@ import { EditScribbleComponent } from './components/edit-scribble/edit-scribble.
   ],
   providers: [
     {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAuth,
+      deps: [AuthService],
+      multi: true,
+    },
+    {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpRequestInterceptor,
       multi: true,
     },
     AuthGuard,
     AuthRouteGuard,
-    CookieService,
   ],
   bootstrap: [AppComponent],
 })

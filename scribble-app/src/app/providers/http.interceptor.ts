@@ -4,69 +4,63 @@ import {
   HttpInterceptor,
   HttpHandler,
   HttpRequest,
-  HTTP_INTERCEPTORS,
-  HttpClient,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { catchError, Observable, switchMap, throwError } from 'rxjs';
+import { catchError, Observable, switchMap, throwError, take } from 'rxjs';
 import { AuthService } from '../services/auth/auth.service';
-import { CookieService } from 'ngx-cookie-service';
-/**
- * @source: https://www.bezkoder.com/angular-13-jwt-auth-httponly-cookie/
- * HttpInterceptor has intercept() method to inspect and transform,
- * HTTP requests before they are sent to server.
- * HttpRequestInterceptor implements HttpInterceptor.
- * We’re gonna add withCredentials: true to make browser include
- * Cookie on the Request header (HttpOnly Cookie).
- * */
+
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
-  constructor(
-    private _authService: AuthService,
-    private _http: HttpClient,
-    private _cookieService: CookieService
-  ) {}
-  refresh = false;
+  constructor(private _authService: AuthService) {}
 
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    // Clone the request and add `withCredentials` to include cookies
     const req = request.clone({
       withCredentials: true,
     });
-    // if no such cookie is present it means first time visit => no need to trigger refresh token flow.
-    if (!this._cookieService.get('user_profile')) {
-      return next.handle(req);
-    } else {
-      return next.handle(req).pipe(
-        catchError((err: HttpErrorResponse) => {
-          console.log(err);
-          if (err.status === 401) {
-            // this.refresh = true;
-            return this._http
-              .get(
-                'http://localhost:9000/auth-service/api/v1/auth/get_new_creds',
-                { withCredentials: true }
-              )
-              .pipe(
-                switchMap((res: any) => {
-                  return next.handle(
-                    request.clone({
-                      withCredentials: true,
+
+    return this._authService.isLoggedIn$.pipe(
+      take(1), // Ensure we take only the latest value from the BehaviorSubject
+      switchMap((isLoggedIn) => {
+        if (!isLoggedIn) {
+          // If user is not logged in, just forward the request
+          return next.handle(req);
+        } else {
+          // If user is logged in, proceed with the request and handle potential 401 errors
+          return next.handle(req).pipe(
+            catchError((err: HttpErrorResponse) => {
+              console.error('HTTP Error:', err);
+              if (err.status === 401) {
+                // If a 401 error occurs, attempt to refresh tokens
+                return this._authService
+                  .refreshTokens() // Call a method in AuthService to refresh tokens
+                  .pipe(
+                    switchMap(() => {
+                      // Retry the original request after refreshing tokens
+                      return next.handle(
+                        request.clone({
+                          withCredentials: true,
+                        })
+                      );
+                    }),
+                    catchError((refreshError) => {
+                      // Handle token refresh failure (e.g., logout user)
+                      console.error('Token refresh failed:', refreshError);
+                      this._authService.updateisLoggedInStatus(false); // Update BehaviorSubject
+                      return throwError(() => refreshError);
                     })
                   );
-                })
-              );
-          } else {
-            // this.refresh = false;
-            return throwError(() => err);
-          }
-        })
-      );
-    }
+              } else {
+                // For other errors, just throw the error
+                return throwError(() => err);
+              }
+            })
+          );
+        }
+      })
+    );
   }
 }
-// export const httpInterceptorProviders = [
-//   { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
-// ];
