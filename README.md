@@ -1,9 +1,9 @@
 ### Scribble Web App
 
-<p>
-  <img src="https://github.com/lakshyajit165/scribble/actions/workflows/main.yml/badge.svg?branch=master" alt="Build, test and push note-service to docker" style="display: inline-block; margin-right: 10px;" />
-  <img src="https://github.com/lakshyajit165/scribble/actions/workflows/auth-service.yml/badge.svg" alt="Build test and push auth-service to Docker" style="display: inline-block;" />
-</p>
+[![Build test and push note-service to docker](https://github.com/lakshyajit165/scribble/actions/workflows/note-service.yml/badge.svg)](https://github.com/lakshyajit165/scribble/actions/workflows/note-service.yml)
+
+[![Build test and push auth-service to Docker](https://github.com/lakshyajit165/scribble/actions/workflows/auth-service.yml/badge.svg)](https://github.com/lakshyajit165/scribble/actions/workflows/auth-service.yml)
+
 > Scribble is a sample web application designed using microservice architecture which consists of nginx for reverse-proxy and request filtering, along with 2 other microservices - auth and notes.
 
 #### Features implemented in this web app:
