@@ -162,16 +162,10 @@ public class AuthController {
             ResponseCookie refreshTokenCookie = ResponseCookie.from(REFRESH_TOKEN, signInCompleteResult.getRefreshToken())
                     .httpOnly(true).domain(cookieDomain).path("/")
                     .build();
-            /** normal cookie - required to maintain auth state(route guards) on client side
-             * (Because http only cookies can't be parsed by JS on the client side)
-             */
-            ResponseCookie encryptedEmailCookie = ResponseCookie.from(USER_PROFILE, encrypt(userSignInRequest.getEmail()))
-                    .domain(cookieDomain).path("/")
-                    .build();
 
             return ResponseEntity
                     .status(200)
-                    .header(HttpHeaders.SET_COOKIE, idTokenCookie.toString(), refreshTokenCookie.toString(), encryptedEmailCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, idTokenCookie.toString(), refreshTokenCookie.toString())
                     .body(new GenericAuthResponse("User signed in."));
 
         } catch (AWSCognitoIdentityProviderException e) {
@@ -407,21 +401,6 @@ public class AuthController {
             // Handle other exceptions (e.g., network error, invalid client ID)
             return false;
         }
-    }
-
-    private String encrypt(String plainText)
-            throws Exception {
-        // encryption for sending email in the response cookie
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES"); // throws NoSuchAlgorithmException
-        keyGenerator.init(128); // block size is 128bits
-        SecretKey secretKey = keyGenerator.generateKey();
-        cipher = Cipher.getInstance("AES"); // throws NoSuchPaddingException
-
-        byte[] plainTextByte = plainText.getBytes();
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        byte[] encryptedByte = cipher.doFinal(plainTextByte);
-        Base64.Encoder encoder = Base64.getEncoder();
-        return encoder.encodeToString(encryptedByte);
     }
 
 }
