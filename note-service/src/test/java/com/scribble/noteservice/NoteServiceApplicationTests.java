@@ -349,6 +349,7 @@ class NoteServiceApplicationTests {
 		return notesRepository.save(note);
 	}
 
+	
 	private void setNoOfSavedNotes() {
 		this.noOfSavedNotes += 1;
 	}
