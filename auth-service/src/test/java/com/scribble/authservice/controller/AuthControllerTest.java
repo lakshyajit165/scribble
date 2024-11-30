@@ -20,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class AuthControllerTest {
+    
     @Mock
     private AWSCognitoIdentityProvider cognitoClient;
 
