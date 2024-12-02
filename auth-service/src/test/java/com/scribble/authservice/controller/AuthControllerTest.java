@@ -2,18 +2,18 @@ package com.scribble.authservice.controller;
 
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.*;
-import com.scribble.authservice.dto.*;
+import com.scribble.authservice.dto.GenericAuthResponse;
+import com.scribble.authservice.dto.UserConfirmForgotPasswordRequest;
+import com.scribble.authservice.dto.UserSignInRequest;
+import com.scribble.authservice.dto.UserSignUpOrForgotPasswordRequest;
 import com.scribble.authservice.model.CognitoUserAccountStatus;
-import com.scribble.authservice.model.CognitoUserStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,23 +30,11 @@ class AuthControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        // Use ReflectionTestUtils to set private fields
-        ReflectionTestUtils.setField(authController, "userPoolId", "mockUserPoolId");
-        ReflectionTestUtils.setField(authController, "clientId", "mockClientId");
-        ReflectionTestUtils.setField(authController, "secretKey", "mockSecretKey");
-        ReflectionTestUtils.setField(authController, "cookieDomain", "mockCookieDomain");
     }
 
-    @Test
-    void testAuthControllerProperties() {
-        // Verify the values
-        assertEquals("mockUserPoolId", ReflectionTestUtils.getField(authController, "userPoolId"));
-        assertEquals("mockClientId", ReflectionTestUtils.getField(authController, "clientId"));
-        assertEquals("mockSecretKey", ReflectionTestUtils.getField(authController, "secretKey"));
-        assertEquals("mockCookieDomain", ReflectionTestUtils.getField(authController, "cookieDomain"));
-    }
-
+    /**
+     * Tests Sign up flow for when a user already exists
+     * */
     @Test
     void testSignUpRequest_UserAlreadyExists() {
         // Mock response from Cognito
@@ -73,6 +61,9 @@ class AuthControllerTest {
         verify(cognitoClient, times(1)).adminGetUser(any(AdminGetUserRequest.class));
     }
 
+    /**
+     * Success scenario for signup flow
+     * */
     @Test
     void testSignUpRequest_NewUserCreation() {
         /**
@@ -100,7 +91,9 @@ class AuthControllerTest {
 
     }
 
-
+    /**
+     * Success scenario for login flow
+     * */
     @Test
     void testSignInRequest_SuccessfulSignIn() {
         // Mock Cognito response
@@ -125,9 +118,12 @@ class AuthControllerTest {
         verify(cognitoClient, times(1)).adminInitiateAuth(any(AdminInitiateAuthRequest.class));
     }
 
+    /**
+     * Flow to check invalid creds during sign in
+     * */
     @Test
     void testSignInRequest_InvalidCredentials() {
-        // Mock Cognito exception
+        // Mocking the expected Cognito exception
         AWSCognitoIdentityProviderException mockException = new AWSCognitoIdentityProviderException("Invalid credentials");
         mockException.setErrorCode("NotAuthorizedException");
         mockException.setStatusCode(401);
@@ -156,6 +152,9 @@ class AuthControllerTest {
         verify(cognitoClient, times(1)).adminInitiateAuth(any(AdminInitiateAuthRequest.class));
     }
 
+    /**
+     * Test for triggering the forgot password flow
+     * */
     @Test
     void testForgotPasswordRequest() {
         // Mock Cognito response
@@ -174,6 +173,9 @@ class AuthControllerTest {
         verify(cognitoClient, times(1)).forgotPassword(any(ForgotPasswordRequest.class));
     }
 
+    /**
+     * Success scenario for forgot password flow
+     * */
     @Test
     void testConfirmForgotPasswordRequest_Success() {
         // Mock Cognito response
