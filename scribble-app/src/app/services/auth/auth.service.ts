@@ -7,6 +7,7 @@ import { ILogin } from 'src/app/model/ILogin';
 import { ISignUpAndForgotPassword } from 'src/app/model/ISignUpAndForgotPassword';
 import { catchError, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { Buffer } from 'buffer';
 
 @Injectable({
   providedIn: 'root',
@@ -28,11 +29,13 @@ export class AuthService {
   checkAuthStatus(): Observable<boolean> {
     // Check if the app has already been initialized
     const appInitialized = localStorage.getItem('app_load_status');
-    console.log(document.cookie);
 
     if (!appInitialized) {
       // First-time load: Do not make an API call
-      localStorage.setItem('app_load_status', 'true'); // Set the flag in localStorage
+      localStorage.setItem(
+        'app_load_status',
+        Buffer.from('true').toString('base64')
+      ); // Set the flag in localStorage
       this.updateisLoggedInStatus(false); // Default to "not logged in"
       return of(false); // Skip API call
     }
