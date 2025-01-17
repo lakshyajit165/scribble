@@ -26,9 +26,22 @@ export class AuthService {
   }
 
   checkAuthStatus(): Observable<boolean> {
+    // Check if the app has already been initialized
+    const appInitialized = localStorage.getItem('app_load_status');
+    console.log(document.cookie);
+
+    if (!appInitialized) {
+      // First-time load: Do not make an API call
+      localStorage.setItem('app_load_status', 'true'); // Set the flag in localStorage
+      this.updateisLoggedInStatus(false); // Default to "not logged in"
+      return of(false); // Skip API call
+    }
+
+    // For subsequent loads or manual reloads, make the API call
     return this._http
       .get<IGenericResponse>(
-        this.apiGateWay + 'auth-service/api/v1/auth/is_loggedin'
+        this.apiGateWay + 'auth-service/api/v1/auth/is_loggedin',
+        { withCredentials: true } // Ensure cookies are sent with the request
       )
       .pipe(
         map((response) => {
@@ -110,6 +123,7 @@ export class AuthService {
   }
 
   logout(): Observable<IGenericResponse> {
+    localStorage.removeItem('app_load_status');
     return this._http
       .post(this.apiGateWay + 'auth-service/api/v1/auth/logout', {})
       .pipe(map((response) => response as IGenericResponse));
